@@ -3,15 +3,12 @@ package org.example.EFDb;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -19,18 +16,23 @@ import javax.persistence.*;
 import java.io.IOException;
 import java.util.List;
 
-import static javafx.scene.input.DataFormat.URL;
-
 public class EFDb extends Application {
 
     private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
+    private static final EntityManager entityManager = emFactory.createEntityManager();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
+
+
     private static Stage stg;
 
     public static void main(String[] args) {
-        EntityManager entityManager = emFactory.createEntityManager();
-        EntityTransaction transaction = null;
 
+//        updateFilmTitles(emFactory,entityManager);
+        launch(args);
+    }
+
+    public static void updateFilmTitles(EntityManagerFactory emFactory, EntityManager entityManager){
+        EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
@@ -51,7 +53,6 @@ public class EFDb extends Application {
         } finally {
             entityManager.close();
         }
-        launch(args);
     }
 
     @Override
@@ -59,20 +60,48 @@ public class EFDb extends Application {
         stg = primaryStage;
 
         ComboBox comboBox = new ComboBox(olFilmTitles);
+        comboBox.setPromptText("Film titlar");
+
         VBox vbox = new VBox();
 
         TextField tfUserName = new TextField();
+        tfUserName.setPromptText("Username");
         TextField tfPassword = new TextField();
+        tfPassword.setPromptText("Password");
         Button bLogin = new Button();
-        vbox.getChildren().addAll(tfUserName, tfPassword, bLogin);
+        bLogin.setText("Log in");
+        Label lLogInAnswer = new Label();
 
-        comboBox.setPromptText("Film titlar");
-        TilePane r = new TilePane();
-        TilePane tile_pane = new TilePane(vbox);
-        Scene scene = new Scene(tile_pane, 200, 200);
+        vbox.getChildren().addAll(tfUserName, tfPassword, bLogin, lLogInAnswer);
+
+        BorderPane logIn = new BorderPane(vbox);
+
+        Scene scene = new Scene(logIn, 200, 200);
         primaryStage.setTitle("EFDb");
         primaryStage.setScene(scene);
+
+        // Button Action
+        bLogin.setOnAction(event -> {
+            if (checkLogInCredentials(tfUserName,tfPassword,lLogInAnswer)){
+                VBox vBox2 = new VBox();
+                BorderPane borderPane2 = new BorderPane();
+                Scene scene2 = new Scene(borderPane2,200,200);
+                primaryStage.setScene(scene2);
+            }
+            tfUserName.clear();
+            tfPassword.clear();
+        });
+
+
+
         primaryStage.show();
+    }
+
+    private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
+        if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("lol123")){
+            lLogInAnswer.setText("Wrong username or password!");
+            return false;
+        } else return true;
     }
 
 }
