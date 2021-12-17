@@ -4,10 +4,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -66,7 +63,7 @@ public class EFDb extends Application {
 
         TextField tfUserName = new TextField();
         tfUserName.setPromptText("Username");
-        TextField tfPassword = new TextField();
+        PasswordField tfPassword = new PasswordField();
         tfPassword.setPromptText("Password");
         Button bLogin = new Button();
         bLogin.setText("Log in");
@@ -83,10 +80,7 @@ public class EFDb extends Application {
         // Button Action
         bLogin.setOnAction(event -> {
             if (checkLogInCredentials(tfUserName,tfPassword,lLogInAnswer)){
-                VBox vBox2 = new VBox();
-                BorderPane borderPane2 = new BorderPane();
-                Scene scene2 = new Scene(borderPane2,200,200);
-                primaryStage.setScene(scene2);
+                createHomeScene(primaryStage);
             }
             tfUserName.clear();
             tfPassword.clear();
@@ -95,6 +89,13 @@ public class EFDb extends Application {
 
 
         primaryStage.show();
+    }
+
+    private void createHomeScene(Stage primaryStage) {
+        VBox vBox2 = new VBox();
+        BorderPane borderPane2 = new BorderPane();
+        Scene scene2 = new Scene(borderPane2,200,200);
+        primaryStage.setScene(scene2);
     }
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
