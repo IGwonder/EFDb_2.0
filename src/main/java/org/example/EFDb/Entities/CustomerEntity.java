@@ -28,7 +28,7 @@ public class CustomerEntity {
     private int addressId;
     @Basic
     @Column(name = "active")
-    private Byte active;
+    private Boolean active;
     @Basic
     @Column(name = "create_date")
     private Timestamp createDate;
@@ -84,11 +84,11 @@ public class CustomerEntity {
         this.addressId = addressId;
     }
 
-    public Byte getActive() {
+    public Boolean getActive() {
         return active;
     }
 
-    public void setActive(Byte active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 
@@ -111,7 +111,7 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(int customerId, int storeId, String firstName, String lastName, String email, int addressId, Byte active, Timestamp createDate, Timestamp lastUpdate) {
+    public CustomerEntity(int customerId, int storeId, String firstName, String lastName, String email, int addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
         this.customerId = customerId;
         this.storeId = storeId;
         this.firstName = firstName;
