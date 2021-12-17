@@ -5,8 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 import javax.persistence.*;
@@ -92,11 +91,41 @@ public class EFDb extends Application {
     }
 
     private void createHomeScene(Stage primaryStage) {
-        VBox vBox2 = new VBox();
         BorderPane borderPane2 = new BorderPane();
-        Scene scene2 = new Scene(borderPane2,200,200);
+        HBox buttonBar = new HBox();
+        borderPane2.setBottom(buttonBar);
+        Button filmButton = new Button(buttonBar.toString());
+        filmButton.setText("Filmer");
+        filmButton.setLayoutX(250);
+        filmButton.setLayoutY(220);
+        Button actorButton = new Button(buttonBar.toString());
+        actorButton.setText("Skådespelare");
+        actorButton.setLayoutX(250);
+        actorButton.setLayoutY(220);
+        Button customerDbButton = new Button(buttonBar.toString());
+        customerDbButton.setText("Kunder");
+        customerDbButton.setLayoutX(250);
+        customerDbButton.setLayoutY(220);
+        Button addCustomerButton = new Button(buttonBar.toString());
+        addCustomerButton.setText("Lägg Till Kund");
+        addCustomerButton.setLayoutX(250);
+        addCustomerButton.setLayoutY(220);
+        Button rentalButton = new Button(buttonBar.toString());
+        rentalButton.setText("Hyr Ut");
+        rentalButton.setLayoutX(250);
+        rentalButton.setLayoutY(220);
+        Scene scene2 = new Scene(borderPane2,1280,720);
+        buttonBar.getChildren().add(filmButton);
+        buttonBar.getChildren().add(actorButton);
+        buttonBar.getChildren().add(customerDbButton);
+        buttonBar.getChildren().add(addCustomerButton);
+        buttonBar.getChildren().add(rentalButton);
         primaryStage.setScene(scene2);
+        primaryStage.show();
+
+
     }
+
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
         if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("lol123")){
