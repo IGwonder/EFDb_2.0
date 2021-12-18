@@ -259,7 +259,9 @@ public class EFDb extends Application {
 
         customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
 
-        customerTable.getItems().add(olCustomer);
+        for (int i = 0; i < olCustomer.size(); i++) {
+            customerTable.getItems().add(olCustomer.get(i));
+        }
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(customerTable);
