@@ -3,6 +3,7 @@ package org.example.EFDb;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -40,6 +41,22 @@ public class EFDb extends Application {
         List<String> films = query.getResultList();
         for (String title : films){
             olFilmTitles.add(title);
+        }
+    }
+
+    public static void updateActorNames(EntityManager entityManager){
+
+        Query query = entityManager.createNativeQuery("SELECT first_name FROM actor");
+        Query query2 = entityManager.createNativeQuery("SELECT last_name FROM actor");
+
+        List<String> actorFirstname = query.getResultList();
+        List<String> actorSurname = query2.getResultList();
+        List<String> actorFullName = new ArrayList<>();
+        for (int i = 0; i < actorFirstname.size(); i++){
+            actorFullName.add(actorFirstname.get(i) + " " + actorSurname.get(i));
+        }
+        for (String name : actorFullName){
+            olActorNames.add(name);
         }
     }
 
@@ -115,22 +132,6 @@ public class EFDb extends Application {
         }
     }
 
-    public static void updateActorNames(EntityManager entityManager){
-
-            Query query = entityManager.createNativeQuery("SELECT first_name FROM actor");
-            Query query2 = entityManager.createNativeQuery("SELECT last_name FROM actor");
-
-            List<String> actorFirstname = query.getResultList();
-            List<String> actorSurname = query2.getResultList();
-            List<String> actorFullName = new ArrayList<>();
-            for (int i = 0; i < actorFirstname.size(); i++){
-                actorFullName.add(actorFirstname.get(i) + " " + actorSurname.get(i));
-            }
-            for (String name : actorFullName){
-                olActorNames.add(name);
-            }
-    }
-
     @Override
     public void start(Stage primaryStage) throws IOException {
         stg = primaryStage;
@@ -162,8 +163,6 @@ public class EFDb extends Application {
             tfPassword.clear();
         });
 
-
-
         primaryStage.show();
     }
 
@@ -171,6 +170,7 @@ public class EFDb extends Application {
         BorderPane homeBorderPane = new BorderPane();
         HBox buttonBar = new HBox();
         homeBorderPane.setBottom(buttonBar);
+
         Button filmButton = new Button(buttonBar.toString());
         filmButton.setText("Filmer");
         filmButton.setOnAction(event -> {
@@ -178,6 +178,7 @@ public class EFDb extends Application {
         });
         filmButton.setLayoutX(250);
         filmButton.setLayoutY(220);
+
         Button actorButton = new Button(buttonBar.toString());
         actorButton.setText("Skådespelare");
         actorButton.setOnAction(event -> {
@@ -185,6 +186,8 @@ public class EFDb extends Application {
         });
         actorButton.setLayoutX(250);
         actorButton.setLayoutY(220);
+
+
         Button customerDbButton = new Button(buttonBar.toString());
         customerDbButton.setText("Kunder");
         customerDbButton.setOnAction(event -> {
@@ -192,14 +195,17 @@ public class EFDb extends Application {
         });
         customerDbButton.setLayoutX(250);
         customerDbButton.setLayoutY(220);
+
         Button addCustomerButton = new Button(buttonBar.toString());
         addCustomerButton.setText("Lägg Till Kund");
         addCustomerButton.setLayoutX(250);
         addCustomerButton.setLayoutY(220);
+
         Button rentalButton = new Button(buttonBar.toString());
         rentalButton.setText("Hyr Ut");
         rentalButton.setLayoutX(250);
         rentalButton.setLayoutY(220);
+
         Scene scene2 = new Scene(homeBorderPane,1280,720);
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
@@ -208,7 +214,6 @@ public class EFDb extends Application {
         buttonBar.getChildren().add(rentalButton);
         primaryStage.setScene(scene2);
         primaryStage.show();
-
     }
 
     private void createFilmPage(Stage primaryStage){
