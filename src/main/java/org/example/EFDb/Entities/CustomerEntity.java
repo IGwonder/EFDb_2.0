@@ -10,10 +10,10 @@ public class CustomerEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "customer_id")
-    private int customerId;
+    private Short customerId;
     @Basic
     @Column(name = "store_id")
-    private int storeId;
+    private Byte storeId;
     @Basic
     @Column(name = "first_name")
     private String firstName;
@@ -25,7 +25,7 @@ public class CustomerEntity {
     private String email;
     @Basic
     @Column(name = "address_id")
-    private int addressId;
+    private Short addressId;
     @Basic
     @Column(name = "active")
     private Boolean active;
@@ -36,19 +36,19 @@ public class CustomerEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
-    public int getCustomerId() {
+    public Short getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(int customerId) {
+    public void setCustomerId(Short customerId) {
         this.customerId = customerId;
     }
 
-    public int getStoreId() {
+    public Byte getStoreId() {
         return storeId;
     }
 
-    public void setStoreId(int storeId) {
+    public void setStoreId(Byte storeId) {
         this.storeId = storeId;
     }
 
@@ -76,11 +76,11 @@ public class CustomerEntity {
         this.email = email;
     }
 
-    public int getAddressId() {
+    public Short getAddressId() {
         return addressId;
     }
 
-    public void setAddressId(int addressId) {
+    public void setAddressId(Short addressId) {
         this.addressId = addressId;
     }
 
@@ -111,7 +111,7 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(int customerId, int storeId, String firstName, String lastName, String email, int addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
+    public CustomerEntity(Short customerId, Byte storeId, String firstName, String lastName, String email, Short addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
         this.customerId = customerId;
         this.storeId = storeId;
         this.firstName = firstName;

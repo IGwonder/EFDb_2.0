@@ -54,33 +54,44 @@ public class EFDb extends Application {
         Query createDateQuery = entityManager.createNativeQuery("SELECT create_date FROM customer");
         Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM customer");
 
-        List customerIDList = customerIDQuery.getResultList();
-        List storeIDList = storeIDQuery.getResultList();
-        List customerFirstNameList = customerFirstNameQuery.getResultList();
-        List customerLastNameList = customerLastNameQuery.getResultList();
-        List emailList = emailQuery.getResultList();
-        List addressIDList = addressIDQuery.getResultList();
-        List activeList = activeQuery.getResultList();
-        List createDateList = createDateQuery.getResultList();
-        List lastUpdateList = lastUpdateQuery.getResultList();
+        List<Short> customerIDList = customerIDQuery.getResultList();
+        List<Byte> storeIDList = storeIDQuery.getResultList();
+        List<String> customerFirstNameList = customerFirstNameQuery.getResultList();
+        List<String> customerLastNameList = customerLastNameQuery.getResultList();
+        List<String> emailList = emailQuery.getResultList();
+        List<Short> addressIDList = addressIDQuery.getResultList();
+        List<Boolean> activeList = activeQuery.getResultList();
+        List<Timestamp> createDateList = createDateQuery.getResultList();
+        List<Timestamp> lastUpdateList = lastUpdateQuery.getResultList();
 
         List<CustomerEntity> customers = new ArrayList<>();
 
         for(int i = 0; i < customerIDList.size(); i++){
-            Short customerID = (Short) customerIDList.get(i);
-            int intCustomerID = customerID.intValue();
-            Byte storeID = (Byte)storeIDList.get(i);
+            Short customerID = customerIDList.get(i);
+            Byte storeID = storeIDList.get(i);
             String customerFirstName = (String) customerFirstNameList.get(i);
             String customerLastName = (String) customerLastNameList.get(i);
             String email = (String)emailList.get(i);
-            Short addressID = (Short) addressIDList.get(i);
-            Boolean active = (Boolean)activeList.get(i);
+            Short addressID = addressIDList.get(i);
+            Boolean active = activeList.get(i);
             Timestamp dateList = (Timestamp)createDateList.get(i);
             Timestamp lastUpdate = (Timestamp)lastUpdateList.get(i);
-            CustomerEntity customer = new CustomerEntity(intCustomerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
+            if (i < 2){
+                System.out.println(customerID);
+                System.out.println(storeID);
+                System.out.println(customerFirstName);
+                System.out.println(customerLastName);
+                System.out.println(email);
+                System.out.println(addressID);
+                System.out.println(active);
+                System.out.println(dateList);
+                System.out.println(lastUpdate);
+            }
+            CustomerEntity customer = new CustomerEntity(customerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
             customers.add(customer);
+            olCustomer.add(customer);
         }
-        olCustomer.add(customers);
+
     }
 
     public static void connectToDatabase(EntityManager entityManager){
@@ -226,32 +237,29 @@ public class EFDb extends Application {
 
     private void createCustomerDbPage(Stage primaryStage){
         TableView customerTable = new TableView();
-        TableColumn <CustomerEntity,Integer> col_customerID = new TableColumn<CustomerEntity,Integer>("Customer ID");
-        TableColumn <CustomerEntity,Integer> col_StoreID= new TableColumn<CustomerEntity,Integer>("Store ID");
-        TableColumn <CustomerEntity,String> col_firstName = new TableColumn<CustomerEntity,String>("First Name");
-        TableColumn <CustomerEntity,String> col_lastName = new TableColumn<CustomerEntity,String>("Last Name");
-        TableColumn <CustomerEntity,String> col_fullName = new TableColumn<CustomerEntity,String>("Full Name");
-        TableColumn <CustomerEntity,String> col_email = new TableColumn<CustomerEntity,String>("Email");
-        TableColumn <CustomerEntity,Integer> col_addressID = new TableColumn<CustomerEntity,Integer>("Address ID");
-        TableColumn <CustomerEntity,Boolean> col_activeMember = new TableColumn<CustomerEntity,Boolean>("Active");
-        TableColumn <CustomerEntity,Timestamp> col_createDate = new TableColumn<CustomerEntity,Timestamp>("Create Date");
-        TableColumn <CustomerEntity,Timestamp> col_lastUpdate = new TableColumn<CustomerEntity,Timestamp>("Last Update");
-        col_fullName.getColumns().addAll(col_firstName, col_lastName);
+        TableColumn <Short, CustomerEntity> col_customerID = new TableColumn<>("Customer ID");
+        TableColumn <Byte, CustomerEntity> col_StoreID= new TableColumn<>("Store ID");
+        TableColumn <String, CustomerEntity> col_firstName = new TableColumn<>("First Name");
+        TableColumn <String, CustomerEntity> col_lastName = new TableColumn<>("Last Name");
+        TableColumn <String, CustomerEntity> col_email = new TableColumn<>("Email");
+        TableColumn <Short, CustomerEntity> col_addressID = new TableColumn<>("Address ID");
+        TableColumn <Boolean, CustomerEntity> col_activeMember = new TableColumn<>("Active");
+        TableColumn <Timestamp, CustomerEntity> col_createDate = new TableColumn<>("Create Date");
+        TableColumn <Timestamp, CustomerEntity> col_lastUpdate = new TableColumn<>("Last Update");
 
-        col_customerID.setCellValueFactory(new PropertyValueFactory<>("Customer ID"));
-        col_StoreID.setCellValueFactory(new PropertyValueFactory<>("Store ID"));
-        col_firstName.setCellValueFactory(new PropertyValueFactory<>("First Name"));
-        col_lastName.setCellValueFactory(new PropertyValueFactory<>("Last Name"));
-        col_fullName.setCellValueFactory(new PropertyValueFactory<>("Full Name"));
-        col_email.setCellValueFactory(new PropertyValueFactory<>("Email"));
-        col_addressID.setCellValueFactory(new PropertyValueFactory<>("Address ID"));
-        col_activeMember.setCellValueFactory(new PropertyValueFactory<>("Active"));
-        col_createDate.setCellValueFactory(new PropertyValueFactory<>("Create Date"));
-        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("Last Update"));
+        col_customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        col_StoreID.setCellValueFactory(new PropertyValueFactory<>("storeId"));
+        col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        col_addressID.setCellValueFactory(new PropertyValueFactory<>("addressId"));
+        col_activeMember.setCellValueFactory(new PropertyValueFactory<>("active"));
+        col_createDate.setCellValueFactory(new PropertyValueFactory<>("createDate"));
+        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
 
-        customerTable.setItems(olCustomer);
+        customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
 
-        customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_fullName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
+        customerTable.getItems().add(olCustomer);
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(customerTable);
