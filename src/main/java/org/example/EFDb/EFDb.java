@@ -3,6 +3,7 @@ package org.example.EFDb;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,68 +20,57 @@ import java.util.List;
 
 public class EFDb extends Application {
 
-    private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
-    private static final EntityManager entityManager = emFactory.createEntityManager();
-    static final ObservableList olFilmTitles = FXCollections.observableArrayList();
-    static final ObservableList olActorNames = FXCollections.observableArrayList();
-    static final ObservableList olCustomer = FXCollections.observableArrayList();
-
-    private static Stage stg;
+//    private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
+//    private static final EntityManager entityManager = emFactory.createEntityManager();
 
     public static void main(String[] args) {
 
-       connectToDatabase(entityManager);
-      // updateActorNames(entityManager);
+//       connectToDatabase(entityManager);
 
-        launch(args);
+       launch(args);
     }
 
-    public static void updateFilmTitles(EntityManager entityManager){
-        Query query = entityManager.createNativeQuery("SELECT title FROM film");
-        List<String> films = query.getResultList();
-        for (String title : films){
-            olFilmTitles.add(title);
-        }
-    }
+
 
     public static void updateCustomerList(EntityManager entityManager){
-        Query customerIDQuery = entityManager.createNativeQuery("SELECT customer_id FROM customer");
-        Query storeIDQuery = entityManager.createNativeQuery("SELECT store_id FROM customer");
-        Query customerFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM customer");
-        Query customerLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM customer");
-        Query emailQuery = entityManager.createNativeQuery("SELECT email FROM customer");
-        Query addressIDQuery = entityManager.createNativeQuery("SELECT address_id FROM customer");
-        Query activeQuery = entityManager.createNativeQuery("SELECT active FROM customer");
-        Query createDateQuery = entityManager.createNativeQuery("SELECT create_date FROM customer");
-        Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM customer");
+//        Query customerIDQuery = entityManager.createNativeQuery("SELECT customer_id FROM customer");
+//        Query storeIDQuery = entityManager.createNativeQuery("SELECT store_id FROM customer");
+//        Query customerFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM customer");
+//        Query customerLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM customer");
+//        Query emailQuery = entityManager.createNativeQuery("SELECT email FROM customer");
+//        Query addressIDQuery = entityManager.createNativeQuery("SELECT address_id FROM customer");
+//        Query activeQuery = entityManager.createNativeQuery("SELECT active FROM customer");
+//        Query createDateQuery = entityManager.createNativeQuery("SELECT create_date FROM customer");
+//        Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM customer");
+//
+//        List customerIDList = customerIDQuery.getResultList();
+//        List storeIDList = storeIDQuery.getResultList();
+//        List customerFirstNameList = customerFirstNameQuery.getResultList();
+//        List customerLastNameList = customerLastNameQuery.getResultList();
+//        List emailList = emailQuery.getResultList();
+//        List addressIDList = addressIDQuery.getResultList();
+//        List activeList = activeQuery.getResultList();
+//        List createDateList = createDateQuery.getResultList();
+//        List lastUpdateList = lastUpdateQuery.getResultList();
 
-        List customerIDList = customerIDQuery.getResultList();
-        List storeIDList = storeIDQuery.getResultList();
-        List customerFirstNameList = customerFirstNameQuery.getResultList();
-        List customerLastNameList = customerLastNameQuery.getResultList();
-        List emailList = emailQuery.getResultList();
-        List addressIDList = addressIDQuery.getResultList();
-        List activeList = activeQuery.getResultList();
-        List createDateList = createDateQuery.getResultList();
-        List lastUpdateList = lastUpdateQuery.getResultList();
+//        List<CustomerEntity> customers = new ArrayList<>();
+//        customers.add(new CustomerEntity(1,1,"Ismar","Gutic","Email.com", 1, true, null, null));
 
-        List<CustomerEntity> customers = new ArrayList<>();
-
-        for(int i = 0; i < customerIDList.size(); i++){
-            Short customerID = (Short) customerIDList.get(i);
-            int intCustomerID = customerID.intValue();
-            Byte storeID = (Byte)storeIDList.get(i);
-            String customerFirstName = (String) customerFirstNameList.get(i);
-            String customerLastName = (String) customerLastNameList.get(i);
-            String email = (String)emailList.get(i);
-            Short addressID = (Short) addressIDList.get(i);
-            Boolean active = (Boolean)activeList.get(i);
-            Timestamp dateList = (Timestamp)createDateList.get(i);
-            Timestamp lastUpdate = (Timestamp)lastUpdateList.get(i);
-            CustomerEntity customer = new CustomerEntity(intCustomerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
-            customers.add(customer);
-        }
-        olCustomer.add(customers);
+//        for(int i = 0; i < customerIDList.size(); i++){
+//            Short customerID = (Short) customerIDList.get(i);
+//            int intCustomerID = customerID.intValue();
+//            Byte storeID = (Byte)storeIDList.get(i);
+//            String customerFirstName = (String) customerFirstNameList.get(i);
+//            String customerLastName = (String) customerLastNameList.get(i);
+//            String email = (String)emailList.get(i);
+//            Short addressID = (Short) addressIDList.get(i);
+//            Boolean active = (Boolean)activeList.get(i);
+//            Timestamp dateList = (Timestamp)createDateList.get(i);
+//            Timestamp lastUpdate = (Timestamp)lastUpdateList.get(i);
+//            CustomerEntity customer = new CustomerEntity(intCustomerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
+//            customers.add(customer);
+//        }
+//        olCustomer.add(customers);
     }
 
     public static void connectToDatabase(EntityManager entityManager){
@@ -88,8 +78,6 @@ public class EFDb extends Application {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            updateFilmTitles(entityManager);
-            updateActorNames(entityManager);
             updateCustomerList(entityManager);
             transaction.commit();
 
@@ -104,159 +92,56 @@ public class EFDb extends Application {
         }
     }
 
-    public static void updateActorNames(EntityManager entityManager){
-
-            Query query = entityManager.createNativeQuery("SELECT first_name FROM actor");
-            Query query2 = entityManager.createNativeQuery("SELECT last_name FROM actor");
-
-            List<String> actorFirstname = query.getResultList();
-            List<String> actorSurname = query2.getResultList();
-            List<String> actorFullName = new ArrayList<>();
-            for (int i = 0; i < actorFirstname.size(); i++){
-                actorFullName.add(actorFirstname.get(i) + " " + actorSurname.get(i));
-            }
-            for (String name : actorFullName){
-                olActorNames.add(name);
-            }
-    }
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-        stg = primaryStage;
-
-        VBox vbox = new VBox();
-
-        TextField tfUserName = new TextField();
-        tfUserName.setPromptText("Username");
-        PasswordField tfPassword = new PasswordField();
-        tfPassword.setPromptText("Password");
-        Button bLogin = new Button();
-        bLogin.setText("Log in");
-        Label lLogInAnswer = new Label();
-
-        vbox.getChildren().addAll(tfUserName, tfPassword, bLogin, lLogInAnswer);
-
-        BorderPane logIn = new BorderPane(vbox);
-
-        Scene scene = new Scene(logIn, 200, 200);
-        primaryStage.setTitle("EFDb");
-        primaryStage.setScene(scene);
-
-        // Button Action
-        bLogin.setOnAction(event -> {
-            if (checkLogInCredentials(tfUserName,tfPassword,lLogInAnswer)){
-                createHomeScene(primaryStage);
-            }
-            tfUserName.clear();
-            tfPassword.clear();
-        });
-
-
-
-        primaryStage.show();
+        createCustomerDbPage(primaryStage);
     }
 
-    private void createHomeScene(Stage primaryStage) {
-        BorderPane homeBorderPane = new BorderPane();
-        HBox buttonBar = new HBox();
-        homeBorderPane.setBottom(buttonBar);
-        Button filmButton = new Button(buttonBar.toString());
-        filmButton.setText("Filmer");
-        filmButton.setOnAction(event -> {
-            createFilmPage(primaryStage);
-        });
-        filmButton.setLayoutX(250);
-        filmButton.setLayoutY(220);
-        Button actorButton = new Button(buttonBar.toString());
-        actorButton.setText("Skådespelare");
-        actorButton.setOnAction(event -> {
-            createActorPage(primaryStage);
-        });
-        actorButton.setLayoutX(250);
-        actorButton.setLayoutY(220);
-        Button customerDbButton = new Button(buttonBar.toString());
-        customerDbButton.setText("Kunder");
-        customerDbButton.setOnAction(event -> {
-            createCustomerDbPage(primaryStage);
-        });
-        customerDbButton.setLayoutX(250);
-        customerDbButton.setLayoutY(220);
-        Button addCustomerButton = new Button(buttonBar.toString());
-        addCustomerButton.setText("Lägg Till Kund");
-        addCustomerButton.setLayoutX(250);
-        addCustomerButton.setLayoutY(220);
-        Button rentalButton = new Button(buttonBar.toString());
-        rentalButton.setText("Hyr Ut");
-        rentalButton.setLayoutX(250);
-        rentalButton.setLayoutY(220);
-        Scene scene2 = new Scene(homeBorderPane,1280,720);
-        buttonBar.getChildren().add(filmButton);
-        buttonBar.getChildren().add(actorButton);
-        buttonBar.getChildren().add(customerDbButton);
-        buttonBar.getChildren().add(addCustomerButton);
-        buttonBar.getChildren().add(rentalButton);
-        primaryStage.setScene(scene2);
-        primaryStage.show();
-
-    }
-
-    private void createFilmPage(Stage primaryStage){
-        ComboBox comboBox = new ComboBox(olFilmTitles);
-        comboBox.setPromptText("Film titlar");
-
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(comboBox);
-        BorderPane filmBorderPane = new BorderPane(vbox);
-        Scene scene3 = new Scene(filmBorderPane, 1280, 720);
-        primaryStage.setScene(scene3);
-        primaryStage.show();
-    }
-
-    private void createActorPage(Stage primaryStage){
-        ComboBox comboBox = new ComboBox(olActorNames);
-        comboBox.setPromptText("Skådespelare");
-
-        VBox vbox = new VBox();
-        vbox.getChildren().addAll(comboBox);
-        BorderPane filmBorderPane = new BorderPane(vbox);
-        Scene scene4 = new Scene(filmBorderPane, 1280, 720);
-        primaryStage.setScene(scene4);
-        primaryStage.show();
-    }
 
     private void createCustomerDbPage(Stage primaryStage){
         TableView customerTable = new TableView();
-        TableColumn <CustomerEntity,Integer> col_customerID = new TableColumn<CustomerEntity,Integer>("Customer ID");
-        TableColumn <CustomerEntity,Integer> col_StoreID= new TableColumn<CustomerEntity,Integer>("Store ID");
-        TableColumn <CustomerEntity,String> col_firstName = new TableColumn<CustomerEntity,String>("First Name");
-        TableColumn <CustomerEntity,String> col_lastName = new TableColumn<CustomerEntity,String>("Last Name");
-        TableColumn <CustomerEntity,String> col_fullName = new TableColumn<CustomerEntity,String>("Full Name");
-        TableColumn <CustomerEntity,String> col_email = new TableColumn<CustomerEntity,String>("Email");
-        TableColumn <CustomerEntity,Integer> col_addressID = new TableColumn<CustomerEntity,Integer>("Address ID");
-        TableColumn <CustomerEntity,Boolean> col_activeMember = new TableColumn<CustomerEntity,Boolean>("Active");
-        TableColumn <CustomerEntity,Timestamp> col_createDate = new TableColumn<CustomerEntity,Timestamp>("Create Date");
-        TableColumn <CustomerEntity,Timestamp> col_lastUpdate = new TableColumn<CustomerEntity,Timestamp>("Last Update");
-        col_fullName.getColumns().addAll(col_firstName, col_lastName);
+        TableColumn <Byte, CustomerEntity> col_customerID = new TableColumn<>("Customer ID");
+        TableColumn <Byte, CustomerEntity> col_StoreID = new TableColumn<>("Store ID");
+        TableColumn <String, CustomerEntity> col_firstName = new TableColumn<>("First Name");
+        TableColumn <String, CustomerEntity> col_lastName = new TableColumn<>("Last Name");
+        TableColumn <String, CustomerEntity> col_email = new TableColumn<>("Email");
+        TableColumn <Byte, CustomerEntity> col_addressID = new TableColumn<>("Address ID");
+        TableColumn <Byte, CustomerEntity> col_activeMember = new TableColumn<>("Active");
+        TableColumn <Timestamp, CustomerEntity> col_createDate = new TableColumn<>("Create Date");
+        TableColumn <Timestamp, CustomerEntity> col_lastUpdate = new TableColumn<>("Last Update");
 
-        col_customerID.setCellValueFactory(new PropertyValueFactory<>("Customer ID"));
-        col_StoreID.setCellValueFactory(new PropertyValueFactory<>("Store ID"));
-        col_firstName.setCellValueFactory(new PropertyValueFactory<>("First Name"));
-        col_lastName.setCellValueFactory(new PropertyValueFactory<>("Last Name"));
-        col_fullName.setCellValueFactory(new PropertyValueFactory<>("Full Name"));
-        col_email.setCellValueFactory(new PropertyValueFactory<>("Email"));
-        col_addressID.setCellValueFactory(new PropertyValueFactory<>("Address ID"));
-        col_activeMember.setCellValueFactory(new PropertyValueFactory<>("Active"));
-        col_createDate.setCellValueFactory(new PropertyValueFactory<>("Create Date"));
-        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("Last Update"));
+        col_customerID.setCellValueFactory(new PropertyValueFactory<>("customerId"));
+        col_StoreID.setCellValueFactory(new PropertyValueFactory<>("storeId"));
+        col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        col_addressID.setCellValueFactory(new PropertyValueFactory<>("addressId"));
+        col_activeMember.setCellValueFactory(new PropertyValueFactory<>("active"));
+        col_createDate.setCellValueFactory(new PropertyValueFactory<>("createDate"));
+        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
 
-        customerTable.setItems(olCustomer);
+//        ObservableList olCustomer = FXCollections.observableArrayList();
+//        olCustomer.add(new CustomerEntity(10,10,"hej","då","Email.com", 10, true, null, null));
+        customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
+        List<CustomerEntity> customerList = new ArrayList<CustomerEntity>();
 
-        customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_fullName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
+        //Dessa ska skapas från databasen. Testa skapa en Query och en lista för varje kolumn som hämtar datan.
+        // I en for-loop bör man då lägga till varje index i listan innuti konstruktorn enl nedan.
+        CustomerEntity customer1 = new CustomerEntity(10, 10,"hej","då","Email.com", 10, 10, Timestamp.valueOf("2021-11-11 12:12:12"), Timestamp.valueOf("2021-11-11 12:12:12"));
+        CustomerEntity customer2 = new CustomerEntity(1, 1,"Ismar","Gut","Email.com", 1, 1, Timestamp.valueOf("2021-11-12 12:12:12"), Timestamp.valueOf("2021-11-12 12:12:12"));
+        customerList.add(customer1);
+        customerList.add(customer2);
+        for (CustomerEntity customer : customerList){
+            customerTable.getItems().add(customer);
+        }
+        customerTable.getItems().add(customerList.get(0));
+        customerTable.getItems().add(customerList.get(1));
 
         VBox vbox = new VBox();
         vbox.getChildren().addAll(customerTable);
         BorderPane customerBorderPane = new BorderPane(vbox);
-        Scene scene5 = new Scene(customerBorderPane, 1280, 720);
+        Scene scene5 = new Scene(customerBorderPane);
         primaryStage.setScene(scene5);
         primaryStage.show();
     }

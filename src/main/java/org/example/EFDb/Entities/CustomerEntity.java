@@ -11,30 +11,46 @@ public class CustomerEntity {
     @Id
     @Column(name = "customer_id")
     private int customerId;
-    @Basic
+
     @Column(name = "store_id")
     private int storeId;
-    @Basic
+
     @Column(name = "first_name")
     private String firstName;
-    @Basic
+
     @Column(name = "last_name")
     private String lastName;
-    @Basic
+
     @Column(name = "email")
     private String email;
-    @Basic
+
     @Column(name = "address_id")
     private int addressId;
-    @Basic
+
     @Column(name = "active")
-    private Boolean active;
-    @Basic
+    private int active;
+
     @Column(name = "create_date")
     private Timestamp createDate;
-    @Basic
+
     @Column(name = "last_update")
     private Timestamp lastUpdate;
+
+    public CustomerEntity() {
+    }
+
+    public CustomerEntity(int customerId, int storeId, String firstName, String lastName, String email,
+                          int addressId, int active, Timestamp createDate, Timestamp lastUpdate) {
+        this.customerId = customerId;
+        this.storeId = storeId;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.addressId = addressId;
+        this.active = active;
+        this.createDate = createDate;
+        this.lastUpdate = lastUpdate;
+    }
 
     public int getCustomerId() {
         return customerId;
@@ -84,11 +100,11 @@ public class CustomerEntity {
         this.addressId = addressId;
     }
 
-    public Boolean getActive() {
+    public int getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(int active) {
         this.active = active;
     }
 
@@ -108,31 +124,18 @@ public class CustomerEntity {
         this.lastUpdate = lastUpdate;
     }
 
-    public CustomerEntity() {
-    }
 
-    public CustomerEntity(int customerId, int storeId, String firstName, String lastName, String email, int addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
-        this.customerId = customerId;
-        this.storeId = storeId;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.addressId = addressId;
-        this.active = active;
-        this.createDate = createDate;
-        this.lastUpdate = lastUpdate;
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CustomerEntity that = (CustomerEntity) o;
-        return Objects.equals(customerId, that.customerId) && Objects.equals(storeId, that.storeId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(addressId, that.addressId) && Objects.equals(active, that.active) && Objects.equals(createDate, that.createDate) && Objects.equals(lastUpdate, that.lastUpdate);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(customerId, storeId, firstName, lastName, email, addressId, active, createDate, lastUpdate);
-    }
+//    @Override
+//    public boolean equals(Object o) {
+//        if (this == o) return true;
+//        if (o == null || getClass() != o.getClass()) return false;
+//        CustomerEntity that = (CustomerEntity) o;
+//        return Objects.equals(customerId, that.customerId) && Objects.equals(storeId, that.storeId) && Objects.equals(firstName, that.firstName) && Objects.equals(lastName, that.lastName) && Objects.equals(email, that.email) && Objects.equals(addressId, that.addressId) && Objects.equals(active, that.active) && Objects.equals(createDate, that.createDate) && Objects.equals(lastUpdate, that.lastUpdate);
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        return Objects.hash(customerId, storeId, firstName, lastName, email, addressId, active, createDate, lastUpdate);
+//    }
 }
