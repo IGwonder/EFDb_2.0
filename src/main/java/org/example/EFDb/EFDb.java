@@ -81,8 +81,6 @@ public class EFDb extends Application {
         List<Timestamp> createDateList = createDateQuery.getResultList();
         List<Timestamp> lastUpdateList = lastUpdateQuery.getResultList();
 
-        List<CustomerEntity> customers = new ArrayList<>();
-
         for(int i = 0; i < customerIDList.size(); i++){
             Short customerID = customerIDList.get(i);
             Byte storeID = storeIDList.get(i);
@@ -93,19 +91,8 @@ public class EFDb extends Application {
             Boolean active = activeList.get(i);
             Timestamp dateList = (Timestamp)createDateList.get(i);
             Timestamp lastUpdate = (Timestamp)lastUpdateList.get(i);
-            if (i < 2){
-                System.out.println(customerID);
-                System.out.println(storeID);
-                System.out.println(customerFirstName);
-                System.out.println(customerLastName);
-                System.out.println(email);
-                System.out.println(addressID);
-                System.out.println(active);
-                System.out.println(dateList);
-                System.out.println(lastUpdate);
-            }
+
             CustomerEntity customer = new CustomerEntity(customerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
-            customers.add(customer);
             olCustomer.add(customer);
         }
 
