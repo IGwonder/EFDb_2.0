@@ -234,7 +234,14 @@ public class EFDb extends Application {
         comboBox.setPromptText("Film titlar");
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(comboBox);
+        Button returnToHome = new Button();
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setText("Return");
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+        vbox.getChildren().addAll(comboBox, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene3 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene3);
@@ -263,7 +270,14 @@ public class EFDb extends Application {
         comboBox.setPromptText("Skådespelare");
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(actorTable, comboBox);
+        Button returnToHome = new Button();
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setText("Return");
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+        vbox.getChildren().addAll(actorTable, comboBox, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene4);
@@ -299,7 +313,14 @@ public class EFDb extends Application {
         }
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(customerTable);
+        Button returnToHome = new Button();
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setText("Return");
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+        vbox.getChildren().addAll(customerTable, returnToHome);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene5 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene5);
@@ -308,7 +329,7 @@ public class EFDb extends Application {
 
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
-        if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("lol123")){
+        if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123")){
             lLogInAnswer.setText("Wrong username or password!");
             return false;
         } else return true;
