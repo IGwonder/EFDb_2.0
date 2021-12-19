@@ -211,11 +211,17 @@ public class EFDb extends Application {
 
         Button addCustomerButton = new Button(buttonBar.toString());
         addCustomerButton.setText("Lägg Till Kund");
+        addCustomerButton.setOnAction(event -> {
+            createAddCustomerPage(primaryStage);
+        });
         addCustomerButton.setLayoutX(250);
         addCustomerButton.setLayoutY(220);
 
         Button rentalButton = new Button(buttonBar.toString());
         rentalButton.setText("Hyr Ut");
+        rentalButton.setOnAction(event -> {
+            createRentMoviePage(primaryStage);
+        });
         rentalButton.setLayoutX(250);
         rentalButton.setLayoutY(220);
 
@@ -324,6 +330,38 @@ public class EFDb extends Application {
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene5 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene5);
+        primaryStage.show();
+    }
+
+    private void createAddCustomerPage(Stage primaryStage){
+        VBox vbox = new VBox();
+        Button returnToHome = new Button();
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setText("Return");
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+        vbox.getChildren().addAll(/*customerTable, */returnToHome);
+        BorderPane customerBorderPane = new BorderPane(vbox);
+        Scene scene6 = new Scene(customerBorderPane, 1280, 720);
+        primaryStage.setScene(scene6);
+        primaryStage.show();
+    }
+
+    private void createRentMoviePage(Stage primaryStage){
+        VBox vbox = new VBox();
+        Button returnToHome = new Button();
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setText("Return");
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+        vbox.getChildren().addAll(/*customerTable, */returnToHome);
+        BorderPane customerBorderPane = new BorderPane(vbox);
+        Scene scene7 = new Scene(customerBorderPane, 1280, 720);
+        primaryStage.setScene(scene7);
         primaryStage.show();
     }
 
