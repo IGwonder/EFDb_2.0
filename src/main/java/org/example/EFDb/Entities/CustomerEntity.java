@@ -36,6 +36,9 @@ public class CustomerEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+    public CustomerEntity(Short customerID, String storeID, String customerFirstName, Timestamp lastUpdate) {
+    }
+
     public Short getCustomerId() {
         return customerId;
     }

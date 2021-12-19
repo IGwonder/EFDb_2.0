@@ -9,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import org.example.EFDb.Entities.ActorEntity;
 import org.example.EFDb.Entities.CustomerEntity;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class EFDb extends Application {
     private static final EntityManager entityManager = emFactory.createEntityManager();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
+    static final ObservableList olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
 
     private static Stage stg;
@@ -58,6 +60,29 @@ public class EFDb extends Application {
         for (String name : actorFullName){
             olActorNames.add(name);
         }
+    }
+
+    public static void updateActors(EntityManager entityManager){
+        Query actorIDQuery = entityManager.createNativeQuery("SELECT actor_id FROM actor");
+        Query actorFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM actor");
+        Query actorLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM actor");
+        Query actorLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM actor");
+
+        List<Short> actorIDList = actorIDQuery.getResultList();
+        List<String> actorFirstNameList = actorFirstNameQuery.getResultList();
+        List<String> actorLastNameList = actorLastNameQuery.getResultList();
+        List<Timestamp> actorLastUpdateList = actorLastUpdateQuery.getResultList();
+
+        for(int i = 0; i < actorIDList.size(); i++){
+            Short actorID = actorIDList.get(i);
+            String firstName = actorFirstNameList.get(i);
+            String lastName = actorLastNameList.get(i);
+            Timestamp lastUpdate = actorLastUpdateList.get(i);
+
+            ActorEntity actor = new ActorEntity(actorID, firstName, lastName, lastUpdate);
+            olActors.add(actor);
+        }
+
     }
 
     public static void updateCustomerList(EntityManager entityManager){
@@ -104,6 +129,7 @@ public class EFDb extends Application {
             transaction = entityManager.getTransaction();
             transaction.begin();
             updateFilmTitles(entityManager);
+            updateActors(entityManager);
             updateActorNames(entityManager);
             updateCustomerList(entityManager);
             transaction.commit();
@@ -216,11 +242,28 @@ public class EFDb extends Application {
     }
 
     private void createActorPage(Stage primaryStage){
+        TableView actorTable = new TableView();
+        TableColumn<Short, ActorEntity> col_actorID = new TableColumn<>("Actor ID");
+        TableColumn<String, ActorEntity> col_firstName = new TableColumn<>("First Name");
+        TableColumn<String, ActorEntity> col_lastName = new TableColumn<>("Last Name");
+        TableColumn<Timestamp, ActorEntity> col_lastUpdate = new TableColumn<>("Last Update");
+
+        col_actorID.setCellValueFactory(new PropertyValueFactory<>("actorId"));
+        col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
+
+        actorTable.getColumns().addAll(col_actorID, col_firstName, col_lastName, col_lastUpdate);
+
+        for (int i = 0; i < olActors.size(); i++) {
+            actorTable.getItems().add(olActors.get(i));
+        }
+
         ComboBox comboBox = new ComboBox(olActorNames);
         comboBox.setPromptText("Skådespelare");
 
         VBox vbox = new VBox();
-        vbox.getChildren().addAll(comboBox);
+        vbox.getChildren().addAll(actorTable, comboBox);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene4);
