@@ -1,5 +1,6 @@
 package org.example.EFDb;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -121,6 +122,7 @@ public class EFDb extends Application {
 
             CustomerEntity customer = new CustomerEntity(customerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
             olCustomer.add(customer);
+
         }
 
     }
@@ -211,14 +213,6 @@ public class EFDb extends Application {
         customerDbButton.setLayoutX(250);
         customerDbButton.setLayoutY(220);
 
-        Button addCustomerButton = new Button(buttonBar.toString());
-        addCustomerButton.setText("Lägg Till Kund");
-        addCustomerButton.setOnAction(event -> {
-            createAddCustomerPage(primaryStage);
-        });
-        addCustomerButton.setLayoutX(250);
-        addCustomerButton.setLayoutY(220);
-
         Button rentalButton = new Button(buttonBar.toString());
         rentalButton.setText("Hyr Ut");
         rentalButton.setOnAction(event -> {
@@ -231,7 +225,6 @@ public class EFDb extends Application {
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
         buttonBar.getChildren().add(customerDbButton);
-        buttonBar.getChildren().add(addCustomerButton);
         buttonBar.getChildren().add(rentalButton);
         primaryStage.setScene(scene2);
         primaryStage.show();
@@ -316,45 +309,32 @@ public class EFDb extends Application {
         col_createDate.setCellValueFactory(new PropertyValueFactory<>("createDate"));
         col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
 
+
         customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
 
         for (int i = 0; i < olCustomer.size(); i++) {
             customerTable.getItems().add(olCustomer.get(i));
         }
 
-        VBox vbox = new VBox();
-        Button returnToHome = new Button();
-        returnToHome.setLayoutX(250);
-        returnToHome.setLayoutY(220);
-        returnToHome.setText("Return");
-        returnToHome.setOnAction(event -> {
-            createHomeScene(primaryStage);
-        });
-        vbox.getChildren().addAll(customerTable, returnToHome);
-        BorderPane customerBorderPane = new BorderPane(vbox);
-        Scene scene5 = new Scene(customerBorderPane, 1280, 720);
-        primaryStage.setScene(scene5);
-        primaryStage.show();
-    }
-
-    private void createAddCustomerPage(Stage primaryStage){
-
-        VBox vbox = new VBox();
-        TextField addCustomerfName = new TextField();
-        addCustomerfName.setText("Förnamn");
-        TextField addCustomersName = new TextField();
-        addCustomersName.setText("Efternamn");
+        TextField addCustomerFName = new TextField();
+        addCustomerFName.setText("First Name");
+        TextField addCustomerSName = new TextField();
+        addCustomerSName.setText("Last Name");
         TextField addCustomerEmail = new TextField();
         addCustomerEmail.setText("Email");
         TextField addCustomerAddress = new TextField();
         addCustomerAddress.setText("Address");
         TextField addCustomerStoreID = new TextField();
-        addCustomerStoreID.setText("Affärs ID");
-        Button addCustomer = new Button();
-        addCustomer.setLayoutX(250);
-        addCustomer.setLayoutX(220);
-        addCustomer.setOnAction(event ->
-                addCustomerInfoToDatabase(addCustomerfName, addCustomersName, addCustomerEmail, addCustomerStoreID));
+        addCustomerStoreID.setText("Store ID");
+
+        VBox vbox = new VBox();
+        Button addCustomerButton = new Button();
+        addCustomerButton.setLayoutX(250);
+        addCustomerButton.setLayoutY(220);
+        addCustomerButton.setText("Add Customer");
+        addCustomerButton.setOnAction(event -> {
+            updateCustomers(addCustomerFName, addCustomerSName, addCustomerEmail, addCustomerAddress, addCustomerStoreID);
+        });
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
         returnToHome.setLayoutY(220);
@@ -362,10 +342,10 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(/*customerTable, */returnToHome, addCustomerfName, addCustomersName, addCustomerEmail, addCustomerAddress, addCustomer);
+        vbox.getChildren().addAll(customerTable, addCustomerFName, addCustomerSName, addCustomerEmail, addCustomerAddress, addCustomerStoreID, addCustomerButton, returnToHome);
         BorderPane customerBorderPane = new BorderPane(vbox);
-        Scene scene6 = new Scene(customerBorderPane, 1280, 720);
-        primaryStage.setScene(scene6);
+        Scene scene5 = new Scene(customerBorderPane, 1280, 720);
+        primaryStage.setScene(scene5);
         primaryStage.show();
     }
 
@@ -384,13 +364,14 @@ public class EFDb extends Application {
         primaryStage.setScene(scene7);
         primaryStage.show();
     }
-
-    private void addCustomerInfoToDatabase(TextField addCustomerfName, TextField addCustomersName, TextField addCustomerEmail, TextField addCustomerStoreID){
-
-
-
-        olCustomer.addAll(addCustomerfName, addCustomersName, addCustomerEmail, addCustomerEmail, addCustomerStoreID);
-
+    //måste hitta ett sätt att lägga in Textfield strängarna i Customer.
+    private void updateCustomers(TextField addCustomerFName, TextField addCustomerSName, TextField addCustomerEmail, TextField addCustomerAddress, TextField addCustomerStoreID){
+        connectToDatabase(entityManager);
+        addCustomerFName.getText();
+        addCustomerSName.getText();
+        addCustomerEmail.getText();
+        addCustomerAddress.getText();
+        addCustomerAddress.getText();
 
     }
 
