@@ -13,6 +13,7 @@ import org.example.EFDb.Entities.ActorEntity;
 import org.example.EFDb.Entities.CustomerEntity;
 
 import javax.persistence.*;
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ public class EFDb extends Application {
     static final ObservableList olActorNames = FXCollections.observableArrayList();
     static final ObservableList olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
+
 
     private static Stage stg;
 
@@ -255,6 +257,8 @@ public class EFDb extends Application {
     }
 
     private void createActorPage(Stage primaryStage){
+        TextField actorFilterField = new TextField();
+
         TableView actorTable = new TableView();
         TableColumn<Short, ActorEntity> col_actorID = new TableColumn<>("Actor ID");
         TableColumn<String, ActorEntity> col_firstName = new TableColumn<>("First Name");
@@ -283,7 +287,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(actorTable, comboBox, returnToHome);
+        vbox.getChildren().addAll(actorTable, comboBox, actorFilterField, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene4);
@@ -334,7 +338,23 @@ public class EFDb extends Application {
     }
 
     private void createAddCustomerPage(Stage primaryStage){
+
         VBox vbox = new VBox();
+        TextField addCustomerfName = new TextField();
+        addCustomerfName.setText("Förnamn");
+        TextField addCustomersName = new TextField();
+        addCustomersName.setText("Efternamn");
+        TextField addCustomerEmail = new TextField();
+        addCustomerEmail.setText("Email");
+        TextField addCustomerAddress = new TextField();
+        addCustomerAddress.setText("Address");
+        TextField addCustomerStoreID = new TextField();
+        addCustomerStoreID.setText("Affärs ID");
+        Button addCustomer = new Button();
+        addCustomer.setLayoutX(250);
+        addCustomer.setLayoutX(220);
+        addCustomer.setOnAction(event ->
+                addCustomerInfoToDatabase(addCustomerfName, addCustomersName, addCustomerEmail, addCustomerStoreID));
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
         returnToHome.setLayoutY(220);
@@ -342,7 +362,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(/*customerTable, */returnToHome);
+        vbox.getChildren().addAll(/*customerTable, */returnToHome, addCustomerfName, addCustomersName, addCustomerEmail, addCustomerAddress, addCustomer);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene6 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene6);
@@ -365,6 +385,14 @@ public class EFDb extends Application {
         primaryStage.show();
     }
 
+    private void addCustomerInfoToDatabase(TextField addCustomerfName, TextField addCustomersName, TextField addCustomerEmail, TextField addCustomerStoreID){
+
+
+
+        olCustomer.addAll(addCustomerfName, addCustomersName, addCustomerEmail, addCustomerEmail, addCustomerStoreID);
+
+
+    }
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
         if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123")){
