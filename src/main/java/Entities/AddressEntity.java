@@ -40,6 +40,8 @@ public class AddressEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+
+
     public Short getAddressId() {
         return addressId;
     }
@@ -115,11 +117,16 @@ public class AddressEntity {
     public AddressEntity() {
     }
 
-    public AddressEntity(String address) {
+    public AddressEntity(String address, String district, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
+        GeometryFactory geometryFactory = new GeometryFactory();
         this.address = address;
+        this.district = district;
+        this.phone = phone;
+        this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        this.lastUpdate = lastUpdate;
     }
 
-    public AddressEntity(Short addressId, String address, String address2, String district, Short cityId, String postalCode, String phone, Point location, Double longitude, Double latitude, Timestamp lastUpdate) {
+    public AddressEntity(Short addressId, String address, String address2, String district, Short cityId, String postalCode, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
         GeometryFactory geometryFactory = new GeometryFactory();
         this.addressId = addressId;
         this.address = address;
