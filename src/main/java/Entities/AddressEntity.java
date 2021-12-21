@@ -1,5 +1,9 @@
 package Entities;
 
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.Point;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
@@ -29,9 +33,9 @@ public class AddressEntity {
     @Basic
     @Column(name = "phone")
     private String phone;
-//    @Basic
-//    @Column(name = "location")
-//    private Object location;
+    @Basic
+    @Column(name = "location")
+    private Point location;
     @Basic
     @Column(name = "last_update")
     private Timestamp lastUpdate;
@@ -92,13 +96,13 @@ public class AddressEntity {
         this.phone = phone;
     }
 
-//    public Object getLocation() {
-//        return location;
-//    }
-//
-//    public void setLocation(Object location) {
-//        this.location = location;
-//    }
+    public Point getLocation() {
+        return location;
+    }
+
+    public void setLocation(Point location) {
+        this.location = location;
+    }
 
     public Timestamp getLastUpdate() {
         return lastUpdate;
@@ -115,7 +119,8 @@ public class AddressEntity {
         this.address = address;
     }
 
-    public AddressEntity(Short addressId, String address, String address2, String district, Short cityId, String postalCode, String phone, Timestamp lastUpdate) {
+    public AddressEntity(Short addressId, String address, String address2, String district, Short cityId, String postalCode, String phone, Point location, Double longitude, Double latitude, Timestamp lastUpdate) {
+        GeometryFactory geometryFactory = new GeometryFactory();
         this.addressId = addressId;
         this.address = address;
         this.address2 = address2;
@@ -123,6 +128,7 @@ public class AddressEntity {
         this.cityId = cityId;
         this.postalCode = postalCode;
         this.phone = phone;
+        this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
         this.lastUpdate = lastUpdate;
     }
 

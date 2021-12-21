@@ -1,5 +1,7 @@
 package Entities;
 
+import javafx.scene.control.TextField;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -36,6 +38,7 @@ public class CustomerEntity {
     @Basic
     @Column(name = "last_update")
     private Timestamp lastUpdate;
+
 
     public Short getCustomerId() {
         return customerId;
@@ -112,11 +115,14 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-
-    public CustomerEntity(String firstName, String lastName, String email) {
+    public CustomerEntity(Byte storeID, String firstName, String lastName, String email, Short addressID, Boolean active, Timestamp createDate) {
+        this.storeId = storeID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.addressId = addressID;
+        this.active = active;
+        this.createDate = createDate;
     }
 
     public CustomerEntity(Short customerId, Byte storeId, String firstName, String lastName, String email, Short addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {

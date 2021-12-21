@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,16 +157,17 @@ public class EFDb extends Application {
         List<Timestamp> createDateList = createDateQuery.getResultList();
         List<Timestamp> lastUpdateList = lastUpdateQuery.getResultList();
 
+
         for(int i = 0; i < customerIDList.size(); i++){
             Short customerID = customerIDList.get(i);
             Byte storeID = storeIDList.get(i);
-            String customerFirstName = (String) customerFirstNameList.get(i);
-            String customerLastName = (String) customerLastNameList.get(i);
-            String email = (String)emailList.get(i);
+            String customerFirstName = customerFirstNameList.get(i);
+            String customerLastName = customerLastNameList.get(i);
+            String email = emailList.get(i);
             Short addressID = addressIDList.get(i);
             Boolean active = activeList.get(i);
-            Timestamp dateList = (Timestamp)createDateList.get(i);
-            Timestamp lastUpdate = (Timestamp)lastUpdateList.get(i);
+            Timestamp dateList = createDateList.get(i);
+            Timestamp lastUpdate = lastUpdateList.get(i);
 
             CustomerEntity customer = new CustomerEntity(customerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
             olCustomer.add(customer);
@@ -393,18 +395,6 @@ public class EFDb extends Application {
             customerTable.getItems().add(olCustomer.get(i));
         }
 
-        TextField addCustomerStoreID = new TextField();
-        TextField addCustomerAddress = new TextField();
-        TextField addCustomerEmail = new TextField();
-        TextField addCustomerSName = new TextField();
-        TextField addCustomerFName = new TextField();
-        addCustomerFName.setText("First Name");
-        addCustomerSName.setText("Last Name");
-        addCustomerEmail.setText("Email");
-        addCustomerAddress.setText("Address");
-        addCustomerStoreID.setText("Store ID");
-
-
         VBox vbox = new VBox();
         Button addCustomerButton = new Button();
         addCustomerButton.setLayoutX(250);
@@ -412,7 +402,7 @@ public class EFDb extends Application {
         addCustomerButton.setText("Add Customer");
         addCustomerButton.setOnAction(event -> {
             CustomerEntity newCustomer = new CustomerEntity();
-            createAddCustomerScene(primaryStage);
+            createAddCustomerScene(primaryStage, customerTable);
         });
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -421,7 +411,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(customerTable, addCustomerFName, addCustomerSName, addCustomerEmail, addCustomerAddress, addCustomerStoreID, addCustomerButton, returnToHome);
+        vbox.getChildren().addAll(customerTable, addCustomerButton, returnToHome);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene5 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene5);
@@ -450,32 +440,42 @@ public class EFDb extends Application {
         }
     }
 
-    private void createAddCustomerScene(Stage primaryStage){
+    private void createAddCustomerScene(Stage primaryStage, TableView customerTable){
         VBox vbox = new VBox();
+
         TextField firstName = new TextField();
         firstName.setText("First Name");
+
         TextField lastName = new TextField();
         lastName.setText("Last Name");
+
         TextField email = new TextField();
         email.setText("Megatron@protonmail.com");
+
         TextField address = new TextField();
         address.setText("Fake street 33");
+
         TextField addressID = new TextField();
         addressID.setPromptText("address ID");
+
         TextField storeID = new TextField();
         storeID.setPromptText("Store ID");
+
         TextField active = new TextField();
         active.setPromptText("active");
-        TextField createDate = new TextField();
-        createDate.setPromptText("Create Date");
+
         TextField city = new TextField();
         city.setText("Houston");
+
         TextField lastUpdate = new TextField();
         lastUpdate.setPromptText("last update");
+
         TextField country = new TextField();
         country.setText("Sweden");
+
         TextField phone = new TextField();
         phone.setPromptText("Phone");
+
         TextField location = new TextField();
         location.setPromptText("Location");
 
@@ -484,18 +484,18 @@ public class EFDb extends Application {
         registerCustomer.setLayoutY(220);
         registerCustomer.setText("Register Customer");
         registerCustomer.setOnAction(event -> {
-            CustomerEntity newCustomer = CustomerEntity(firstName, lastName, email, address, city, country, createDate, lastUpdate);
-            olCustomer.add(newCustomer);
+            CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),Short.parseShort(addressID.getText()),Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()));
+            olCustomer.add(newCustomer); //TODO: se till att tabellen uppdateras direkt efter man har lagt till kunden (update knapp?)
         });
 
-        Button returnToHome = new Button();
-        returnToHome.setLayoutX(250);
-        returnToHome.setLayoutY(220);
-        returnToHome.setText("Return");
-        returnToHome.setOnAction(event -> {
-            createHomeScene(primaryStage);
+        Button returnToCustomerScene = new Button();
+        returnToCustomerScene.setLayoutX(250);
+        returnToCustomerScene.setLayoutY(220);
+        returnToCustomerScene.setText("Return");
+        returnToCustomerScene.setOnAction(event -> {
+            createCustomerDbPage(primaryStage);
         });
-        vbox.getChildren().addAll(returnToHome, firstName, lastName, email, address, addressID, storeID, active, createDate, city, lastUpdate, country);
+        vbox.getChildren().addAll(returnToCustomerScene, firstName, lastName, email, address, addressID, storeID, active, city, lastUpdate, country, registerCustomer);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene7 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene7);
