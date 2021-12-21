@@ -2,6 +2,7 @@ package Entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -35,9 +36,6 @@ public class CustomerEntity {
     @Basic
     @Column(name = "last_update")
     private Timestamp lastUpdate;
-
-    public CustomerEntity(Short customerID, String storeID, String customerFirstName, Timestamp lastUpdate) {
-    }
 
     public Short getCustomerId() {
         return customerId;
@@ -112,6 +110,13 @@ public class CustomerEntity {
     }
 
     public CustomerEntity() {
+    }
+
+
+    public CustomerEntity(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
     }
 
     public CustomerEntity(Short customerId, Byte storeId, String firstName, String lastName, String email, Short addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {

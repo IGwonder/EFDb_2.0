@@ -12,10 +12,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
+import  java.time.*;
 import javax.persistence.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,6 @@ public class EFDb extends Application {
     static final ObservableList olActorNames = FXCollections.observableArrayList();
     static final ObservableList olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
-
 
     private static Stage stg;
 
@@ -186,7 +187,8 @@ public class EFDb extends Application {
             updateActors(entityManager);
             updateActorNames(entityManager);
             updateCustomerList(entityManager);
-            transaction.commit();
+
+//            transaction.commit();
 
         } catch (Exception e) {
             if (transaction != null) {
@@ -195,7 +197,7 @@ public class EFDb extends Application {
             e.printStackTrace();
 
         } finally {
-            entityManager.close();
+//            entityManager.close();
         }
     }
 
@@ -401,16 +403,18 @@ public class EFDb extends Application {
             customerTable.getItems().add(olCustomer.get(i));
         }
 
+
+        TextField addCustomerStoreID = new TextField();
+        TextField addCustomerAddress = new TextField();
+        TextField addCustomerEmail = new TextField();
+        TextField addCustomerSName = new TextField();
         TextField addCustomerFName = new TextField();
         addCustomerFName.setText("First Name");
-        TextField addCustomerSName = new TextField();
         addCustomerSName.setText("Last Name");
-        TextField addCustomerEmail = new TextField();
         addCustomerEmail.setText("Email");
-        TextField addCustomerAddress = new TextField();
         addCustomerAddress.setText("Address");
-        TextField addCustomerStoreID = new TextField();
         addCustomerStoreID.setText("Store ID");
+
 
         VBox vbox = new VBox();
         Button addCustomerButton = new Button();
@@ -418,7 +422,9 @@ public class EFDb extends Application {
         addCustomerButton.setLayoutY(220);
         addCustomerButton.setText("Add Customer");
         addCustomerButton.setOnAction(event -> {
-            updateCustomers(addCustomerFName, addCustomerSName, addCustomerEmail, addCustomerAddress, addCustomerStoreID);
+            CustomerEntity newCustomer = new CustomerEntity(addCustomerFName.getText(), addCustomerSName.getText(), addCustomerEmail.getText());
+            olCustomer.add(newCustomer);
+            addToDatabase(entityManager, newCustomer);
         });
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -432,6 +438,27 @@ public class EFDb extends Application {
         Scene scene5 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene5);
         primaryStage.show();
+    }
+
+    public static void addToDatabase(EntityManager entityManager, CustomerEntity newCustomer){
+        EntityTransaction transaction = null;
+        try {
+            transaction = entityManager.getTransaction();
+//            transaction.begin();
+
+            entityManager.persist(newCustomer);
+
+//            transaction.commit();
+
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+
+        } finally {
+            entityManager.close();
+        }
     }
 
     private void createRentMoviePage(Stage primaryStage){
@@ -449,16 +476,7 @@ public class EFDb extends Application {
         primaryStage.setScene(scene7);
         primaryStage.show();
     }
-    //måste hitta ett sätt att lägga in Textfield strängarna i Customer.
-    private void updateCustomers(TextField addCustomerFName, TextField addCustomerSName, TextField addCustomerEmail, TextField addCustomerAddress, TextField addCustomerStoreID){
-        connectToDatabase(entityManager);
-        addCustomerFName.getText();
-        addCustomerSName.getText();
-        addCustomerEmail.getText();
-        addCustomerAddress.getText();
-        addCustomerAddress.getText();
 
-    }
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
         if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123")){
