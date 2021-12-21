@@ -263,19 +263,10 @@ public class EFDb extends Application {
         customerDbButton.setLayoutX(250);
         customerDbButton.setLayoutY(220);
 
-        Button rentalButton = new Button(buttonBar.toString());
-        rentalButton.setText("Hyr Ut");
-        rentalButton.setOnAction(event -> {
-            createRentMoviePage(primaryStage);
-        });
-        rentalButton.setLayoutX(250);
-        rentalButton.setLayoutY(220);
-
         Scene scene2 = new Scene(homeBorderPane,1280,720);
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
         buttonBar.getChildren().add(customerDbButton);
-        buttonBar.getChildren().add(rentalButton);
         primaryStage.setScene(scene2);
         primaryStage.show();
     }
@@ -402,9 +393,6 @@ public class EFDb extends Application {
             customerTable.getItems().add(olCustomer.get(i));
         }
 
-
-
-
         TextField addCustomerStoreID = new TextField();
         TextField addCustomerAddress = new TextField();
         TextField addCustomerEmail = new TextField();
@@ -423,10 +411,8 @@ public class EFDb extends Application {
         addCustomerButton.setLayoutY(220);
         addCustomerButton.setText("Add Customer");
         addCustomerButton.setOnAction(event -> {
-            CustomerEntity newCustomer = new CustomerEntity(addCustomerFName.getText(), addCustomerSName.getText(), addCustomerEmail.getText());
-//            olCustomer.add(newCustomer);
-            addToDatabase(newCustomer);
-            customerTable.getItems().add(newCustomer);
+            CustomerEntity newCustomer = new CustomerEntity();
+            createAddCustomerScene(primaryStage);
         });
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -464,8 +450,44 @@ public class EFDb extends Application {
         }
     }
 
-    private void createRentMoviePage(Stage primaryStage){
+    private void createAddCustomerScene(Stage primaryStage){
         VBox vbox = new VBox();
+        TextField firstName = new TextField();
+        firstName.setText("First Name");
+        TextField lastName = new TextField();
+        lastName.setText("Last Name");
+        TextField email = new TextField();
+        email.setText("Megatron@protonmail.com");
+        TextField address = new TextField();
+        address.setText("Fake street 33");
+        TextField addressID = new TextField();
+        addressID.setPromptText("address ID");
+        TextField storeID = new TextField();
+        storeID.setPromptText("Store ID");
+        TextField active = new TextField();
+        active.setPromptText("active");
+        TextField createDate = new TextField();
+        createDate.setPromptText("Create Date");
+        TextField city = new TextField();
+        city.setText("Houston");
+        TextField lastUpdate = new TextField();
+        lastUpdate.setPromptText("last update");
+        TextField country = new TextField();
+        country.setText("Sweden");
+        TextField phone = new TextField();
+        phone.setPromptText("Phone");
+        TextField location = new TextField();
+        location.setPromptText("Location");
+
+        Button registerCustomer = new Button();
+        registerCustomer.setLayoutX(250);
+        registerCustomer.setLayoutY(220);
+        registerCustomer.setText("Register Customer");
+        registerCustomer.setOnAction(event -> {
+            CustomerEntity newCustomer = CustomerEntity(firstName, lastName, email, address, city, country, createDate, lastUpdate);
+            olCustomer.add(newCustomer);
+        });
+
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
         returnToHome.setLayoutY(220);
@@ -473,7 +495,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(/*customerTable, */returnToHome);
+        vbox.getChildren().addAll(returnToHome, firstName, lastName, email, address, addressID, storeID, active, createDate, city, lastUpdate, country);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene7 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene7);
