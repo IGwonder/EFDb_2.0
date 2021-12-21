@@ -12,10 +12,13 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import org.example.EFDb.Entities.ActorEntity;
 import org.example.EFDb.Entities.CustomerEntity;
+import org.example.EFDb.Entities.FilmEntity;
 
 import javax.persistence.*;
 import javax.xml.soap.Text;
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -25,6 +28,7 @@ public class EFDb extends Application {
 
     private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
     private static final EntityManager entityManager = emFactory.createEntityManager();
+    static final ObservableList olFilms = FXCollections.observableArrayList();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
     static final ObservableList olActors = FXCollections.observableArrayList();
@@ -46,6 +50,55 @@ public class EFDb extends Application {
         List<String> films = query.getResultList();
         for (String title : films){
             olFilmTitles.add(title);
+        }
+    }
+
+    public static void updateFilms(EntityManager entityManager){
+        Query filmIDQuery = entityManager.createNativeQuery("SELECT film_id FROM film");
+        Query filmTitleQuery = entityManager.createNativeQuery("SELECT title FROM film");
+        Query filmDescriptionQuery = entityManager.createNativeQuery("SELECT description FROM film");
+        Query filmReleaseYearQuery = entityManager.createNativeQuery("SELECT release_year FROM film");
+        Query filmLanguageIDQuery = entityManager.createNativeQuery("SELECT language_id FROM film");
+        Query filmOriginalLanguageIDQuery = entityManager.createNativeQuery("SELECT original_language_id FROM film");
+        Query filmRentalDurationQuery = entityManager.createNativeQuery("SELECT rental_duration FROM film");
+        Query filmRentalRateQuery = entityManager.createNativeQuery("SELECT rental_rate FROM film");
+        Query filmLengthQuery = entityManager.createNativeQuery("SELECT length FROM film");
+        Query filmReplacementCostQuery = entityManager.createNativeQuery("SELECT replacement_cost FROM film");
+        Query filmRatingQuery = entityManager.createNativeQuery("SELECT rating FROM film");
+        Query filmSpecialFeaturesQuery = entityManager.createNativeQuery("SELECT special_features FROM film");
+        Query filmLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM film");
+
+        List<Short> filmIDList = filmIDQuery.getResultList();
+        List<String> filmTitleList = filmTitleQuery.getResultList();
+        List<String> filmDescriptionList = filmDescriptionQuery.getResultList();
+        List<Date> filmReleaseYearList = filmReleaseYearQuery.getResultList();
+        List<Byte> filmLanguageIDList = filmLanguageIDQuery.getResultList();
+        List<Byte> filmOriginalLanguageIDList = filmOriginalLanguageIDQuery.getResultList();
+        List<Byte> filmRentalDurationList = filmRentalDurationQuery.getResultList();
+        List<BigDecimal> filmRentalRateList = filmRentalRateQuery.getResultList();
+        List<Short> filmLengthList = filmLengthQuery.getResultList();
+        List<BigDecimal> filmReplacementCostList = filmReplacementCostQuery.getResultList();
+        List<String> filmRatingList = filmRatingQuery.getResultList();
+        List<String> filmSpecialFeaturesList = filmSpecialFeaturesQuery.getResultList();
+        List<Timestamp> filmLastUpdateList = filmLastUpdateQuery.getResultList();
+
+        for(int i = 0; i < filmIDList.size(); i++){
+            Short filmID = filmIDList.get(i);
+            String filmTitle = filmTitleList.get(i);
+            String description = filmDescriptionList.get(i);
+            Date releaseYear = filmReleaseYearList.get(i);
+            Byte languageID = filmLanguageIDList.get(i);
+            Byte originalLanguageID = filmOriginalLanguageIDList.get(i);
+            Byte rentalDuration = filmRentalDurationList.get(i);
+            BigDecimal rentalRate = filmRentalRateList.get(i);
+            Short length = filmLengthList.get(i);
+            BigDecimal replacementCost = filmReplacementCostList.get(i);
+            String rating = filmRatingList.get(i);
+            String specialFeatures = filmSpecialFeaturesList.get(i);
+            Timestamp lastUpdate = filmLastUpdateList.get(i);
+
+            FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, languageID, originalLanguageID, rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures, lastUpdate);
+            olFilms.add(film);
         }
     }
 
