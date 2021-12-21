@@ -1,4 +1,4 @@
-package org.example.EFDb.Entities;
+package Entities;
 
 import javax.persistence.*;
 import java.sql.Timestamp;

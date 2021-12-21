@@ -1,10 +1,9 @@
-package org.example.EFDb.Entities;
+package Entities;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.time.Year;
 import java.util.Objects;
 
 @Entity

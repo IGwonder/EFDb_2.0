@@ -1,27 +1,23 @@
 package org.example.EFDb;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import org.example.EFDb.Entities.ActorEntity;
-import org.example.EFDb.Entities.CustomerEntity;
-import org.example.EFDb.Entities.FilmEntity;
+import Entities.ActorEntity;
+import Entities.CustomerEntity;
+import Entities.FilmEntity;
 
 import javax.persistence.*;
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class EFDb extends Application {
@@ -185,6 +181,7 @@ public class EFDb extends Application {
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
+            updateFilms(entityManager);
             updateFilmTitles(entityManager);
             updateActors(entityManager);
             updateActorNames(entityManager);
@@ -284,6 +281,41 @@ public class EFDb extends Application {
     }
 
     private void createFilmPage(Stage primaryStage){
+        TableView filmTable = new TableView();
+        TableColumn<Short, FilmEntity> col_filmID = new TableColumn<>("Film ID");
+        TableColumn<String, FilmEntity> col_title= new TableColumn<>("Title");
+        TableColumn<String, FilmEntity> col_description= new TableColumn<>("Description");
+        TableColumn<Date, FilmEntity> col_releaseYear= new TableColumn<>("Release Year");
+        TableColumn<Byte, FilmEntity> col_languageID= new TableColumn<>("Language ID");
+        TableColumn<Byte, FilmEntity> col_originalLanguageID= new TableColumn<>("Original Language ID");
+        TableColumn<Byte, FilmEntity> col_rentalDuration= new TableColumn<>("Rental Duration");
+        TableColumn<BigDecimal, FilmEntity> col_rentalRate = new TableColumn<>("Rental Rate");
+        TableColumn<Short, FilmEntity> col_length = new TableColumn<>("Length");
+        TableColumn<BigDecimal, FilmEntity> col_replacementCost = new TableColumn<>("Replacement Cost");
+        TableColumn<String, FilmEntity> col_rating = new TableColumn<>("Rating");
+        TableColumn<String, FilmEntity> col_specialFeatures = new TableColumn<>("Special Features");
+        TableColumn<Timestamp, FilmEntity> col_lastUpdate = new TableColumn<>("Last Update");
+
+        col_filmID.setCellValueFactory(new PropertyValueFactory<>("filmId"));
+        col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
+        col_description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        col_releaseYear.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
+        col_languageID.setCellValueFactory(new PropertyValueFactory<>("languageId"));
+        col_originalLanguageID.setCellValueFactory(new PropertyValueFactory<>("originalLanguageId"));
+        col_rentalDuration.setCellValueFactory(new PropertyValueFactory<>("rentalDuration"));
+        col_rentalRate.setCellValueFactory(new PropertyValueFactory<>("rentalRate"));
+        col_length.setCellValueFactory(new PropertyValueFactory<>("length"));
+        col_replacementCost.setCellValueFactory(new PropertyValueFactory<>("replacementCost"));
+        col_rating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        col_specialFeatures.setCellValueFactory(new PropertyValueFactory<>("specialFeatures"));
+        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
+
+        filmTable.getColumns().addAll(col_filmID, col_title, col_description, col_releaseYear, col_languageID, col_originalLanguageID, col_rentalDuration, col_rentalRate, col_length, col_replacementCost, col_rating, col_specialFeatures, col_lastUpdate);
+
+        for (int i = 0; i < olFilms.size(); i++){
+            filmTable.getItems().add(olFilms.get(i));
+        }
+
         ComboBox comboBox = new ComboBox(olFilmTitles);
         comboBox.setPromptText("Film titlar");
 
@@ -295,7 +327,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(comboBox, returnToHome);
+        vbox.getChildren().addAll(filmTable, comboBox, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene3 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene3);
