@@ -12,12 +12,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
-import  java.time.*;
 import javax.persistence.*;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +23,7 @@ import java.util.List;
 public class EFDb extends Application {
 
     private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
-    private static final EntityManager entityManager = emFactory.createEntityManager();
+
     static final ObservableList olFilms = FXCollections.observableArrayList();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
@@ -36,13 +34,12 @@ public class EFDb extends Application {
 
     public static void main(String[] args) {
 
-       connectToDatabase(entityManager);
-      // updateActorNames(entityManager);
+       getTablesFromDatabase();
 
         launch(args);
     }
 
-    public static void updateFilmTitles(EntityManager entityManager){
+    public static void getFilmTitles(EntityManager entityManager){
         Query query = entityManager.createNativeQuery("SELECT title FROM film");
         List<String> films = query.getResultList();
         for (String title : films){
@@ -50,7 +47,7 @@ public class EFDb extends Application {
         }
     }
 
-    public static void updateFilms(EntityManager entityManager){
+    public static void getFilms(EntityManager entityManager){
         Query filmIDQuery = entityManager.createNativeQuery("SELECT film_id FROM film");
         Query filmTitleQuery = entityManager.createNativeQuery("SELECT title FROM film");
         Query filmDescriptionQuery = entityManager.createNativeQuery("SELECT description FROM film");
@@ -99,7 +96,7 @@ public class EFDb extends Application {
         }
     }
 
-    public static void updateActorNames(EntityManager entityManager){
+    public static void getActorNames(EntityManager entityManager){
 
         Query query = entityManager.createNativeQuery("SELECT first_name FROM actor");
         Query query2 = entityManager.createNativeQuery("SELECT last_name FROM actor");
@@ -115,7 +112,7 @@ public class EFDb extends Application {
         }
     }
 
-    public static void updateActors(EntityManager entityManager){
+    public static void getActors(EntityManager entityManager){
         Query actorIDQuery = entityManager.createNativeQuery("SELECT actor_id FROM actor");
         Query actorFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM actor");
         Query actorLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM actor");
@@ -138,7 +135,7 @@ public class EFDb extends Application {
 
     }
 
-    public static void updateCustomerList(EntityManager entityManager){
+    public static void getCustomers(EntityManager entityManager){
         Query customerIDQuery = entityManager.createNativeQuery("SELECT customer_id FROM customer");
         Query storeIDQuery = entityManager.createNativeQuery("SELECT store_id FROM customer");
         Query customerFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM customer");
@@ -177,18 +174,19 @@ public class EFDb extends Application {
 
     }
 
-    public static void connectToDatabase(EntityManager entityManager){
+    public static void getTablesFromDatabase(){
+        EntityManager entityManager = emFactory.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
-            updateFilms(entityManager);
-            updateFilmTitles(entityManager);
-            updateActors(entityManager);
-            updateActorNames(entityManager);
-            updateCustomerList(entityManager);
+            getFilms(entityManager);
+            getFilmTitles(entityManager);
+            getActors(entityManager);
+            getActorNames(entityManager);
+            getCustomers(entityManager);
 
-//            transaction.commit();
+            transaction.commit();
 
         } catch (Exception e) {
             if (transaction != null) {
@@ -197,7 +195,7 @@ public class EFDb extends Application {
             e.printStackTrace();
 
         } finally {
-//            entityManager.close();
+            entityManager.close();
         }
     }
 
@@ -356,6 +354,7 @@ public class EFDb extends Application {
             actorTable.getItems().add(olActors.get(i));
         }
 
+
         ComboBox comboBox = new ComboBox(olActorNames);
         comboBox.setPromptText("Skådespelare");
 
@@ -404,6 +403,8 @@ public class EFDb extends Application {
         }
 
 
+
+
         TextField addCustomerStoreID = new TextField();
         TextField addCustomerAddress = new TextField();
         TextField addCustomerEmail = new TextField();
@@ -423,8 +424,9 @@ public class EFDb extends Application {
         addCustomerButton.setText("Add Customer");
         addCustomerButton.setOnAction(event -> {
             CustomerEntity newCustomer = new CustomerEntity(addCustomerFName.getText(), addCustomerSName.getText(), addCustomerEmail.getText());
-            olCustomer.add(newCustomer);
-            addToDatabase(entityManager, newCustomer);
+//            olCustomer.add(newCustomer);
+            addToDatabase(newCustomer);
+            customerTable.getItems().add(newCustomer);
         });
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -440,15 +442,16 @@ public class EFDb extends Application {
         primaryStage.show();
     }
 
-    public static void addToDatabase(EntityManager entityManager, CustomerEntity newCustomer){
+    public static void addToDatabase(CustomerEntity newCustomer){
+        EntityManager entityManager = emFactory.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
-//            transaction.begin();
+            transaction.begin();
 
             entityManager.persist(newCustomer);
 
-//            transaction.commit();
+            transaction.commit();
 
         } catch (Exception e) {
             if (transaction != null) {
