@@ -1,5 +1,8 @@
 package org.example.EFDb;
 
+import Entities.ActorEntity;
+import Entities.CustomerEntity;
+import Entities.FilmEntity;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,9 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import Entities.ActorEntity;
-import Entities.CustomerEntity;
-import Entities.FilmEntity;
 
 import javax.persistence.*;
 import java.io.IOException;
