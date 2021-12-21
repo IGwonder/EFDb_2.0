@@ -1,24 +1,20 @@
 package org.example.EFDb;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import org.example.EFDb.Entities.ActorEntity;
-import org.example.EFDb.Entities.CustomerEntity;
+import Entities.ActorEntity;
+import Entities.CustomerEntity;
 
 import javax.persistence.*;
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class EFDb extends Application {
