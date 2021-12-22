@@ -1,9 +1,6 @@
 package org.example.EFDb;
 
-import Entities.ActorEntity;
-import Entities.AddressEntity;
-import Entities.CustomerEntity;
-import Entities.FilmEntity;
+import Entities.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -419,17 +416,32 @@ public class EFDb extends Application {
         primaryStage.show();
     }
 
-    public static void addToDatabase(CustomerEntity newCustomer, AddressEntity newCustomerAdress){
+    public static void addToDatabase(TextField storeID, TextField firstName, TextField lastName, TextField email, TextField active, TextField address, TextField district, TextField city, TextField country, TextField phone, TextField longitude, TextField latitude){
         EntityManager entityManager = emFactory.createEntityManager();
         EntityTransaction transaction = null;
         try {
             transaction = entityManager.getTransaction();
             transaction.begin();
 
+            Query queryAddressID = entityManager.createNativeQuery("SELECT address_id from address where address = '" + address.getText() + "'");
+            Query queryCityID = entityManager.createNativeQuery("SELECT city_id from city where city = '" + city.getText() + "'");
+            Query queryCountyID = entityManager.createNativeQuery("SELECT country_id from country where country = '" + country.getText() + "'");
+
+            Query queryAddress = entityManager.createNativeQuery("INSERT INTO address VALUES ('"+address.getText()+"', '"+district.getText()+"', /*+(short) queryCityID.getFirstResult()+*/ '"+email.getText()+phone.getText()+"', ST_GeomFromText('POINT(-26.66115 40.95858)'), '"+Timestamp.valueOf(LocalDateTime.now())+"', '"+Timestamp.valueOf(LocalDateTime.now())+"')");
+            CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),(short) queryAddressID.getFirstResult() ,Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()));
+//            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(),(short) queryCityID.getFirstResult(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
+            CountryEntity newCustomerCountry = new CountryEntity(country.getText(), Timestamp.valueOf(LocalDateTime.now()));
+            CityEntity newCustomerCity = new CityEntity(city.getText(),/*(short) queryCountyID.getFirstResult(),*/ Timestamp.valueOf(LocalDateTime.now()));
             entityManager.persist(newCustomer);
-            entityManager.persist(newCustomerAdress);
+//            entityManager.persist(newCustomerAddress);
+            entityManager.persist(newCustomerCountry);
+            entityManager.persist(newCustomerCity);
+
 
             transaction.commit();
+
+            olCustomer.clear();
+            getCustomers(entityManager);
 
         } catch (Exception e) {
             if (transaction != null) {
@@ -492,33 +504,8 @@ public class EFDb extends Application {
         registerCustomer.setLayoutY(220);
         registerCustomer.setText("Register Customer");
         registerCustomer.setOnAction(event -> {
-            CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()));
-            olCustomer.add(newCustomer);
-            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
-            //TODO: gör om att ny kund läggs till i databasen och tabellen ska uppdateras därefter!
-
-            EntityManager entityManager = emFactory.createEntityManager();
-            EntityTransaction transaction = null;
-            try {
-                transaction = entityManager.getTransaction();
-                transaction.begin();
-
-                Query query = entityManager.createNativeQuery("SELECT address_id from address where address = '" + address.getText() + "'");
-                List addressFromID = query.getResultList();
-                System.out.println(query.getFirstResult());
-
-                transaction.commit();
-
-            } catch (Exception e) {
-                if (transaction != null) {
-                    transaction.rollback();
-                }
-                e.printStackTrace();
-
-            } finally {
-                entityManager.close();
-            }
-
+          //TODO: gör om att ny kund läggs till i databasen och tabellen ska uppdateras därefter!
+            addToDatabase(storeID, firstName, lastName, email, active, address, district, city, country, phone, longitude, latitude);
         });
 
         Button returnToCustomerScene = new Button();

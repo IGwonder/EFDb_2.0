@@ -45,8 +45,8 @@ public class CountryEntity {
     public CountryEntity() {
     }
 
-    public CountryEntity(Short countryId, Timestamp lastUpdate) {
-        this.countryId = countryId;
+    public CountryEntity(String country, Timestamp lastUpdate) {
+        this.country = country;
         this.lastUpdate = lastUpdate;
     }
 

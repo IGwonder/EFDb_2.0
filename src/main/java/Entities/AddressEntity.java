@@ -1,5 +1,6 @@
 package Entities;
 
+import org.hibernate.annotations.Type;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -33,7 +34,6 @@ public class AddressEntity {
     @Basic
     @Column(name = "phone")
     private String phone;
-    @Basic
     @Column(name = "location")
     private Point location;
     @Basic
@@ -117,10 +117,11 @@ public class AddressEntity {
     public AddressEntity() {
     }
 
-    public AddressEntity(String address, String district, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
+    public AddressEntity(String address, String district, Short cityID, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
         GeometryFactory geometryFactory = new GeometryFactory();
         this.address = address;
         this.district = district;
+        this.cityId = cityID;
         this.phone = phone;
         this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
         this.lastUpdate = lastUpdate;

@@ -115,13 +115,15 @@ public class CustomerEntity {
     public CustomerEntity() {
     }
 
-    public CustomerEntity(Byte storeID, String firstName, String lastName, String email, Boolean active, Timestamp createDate) {
+    public CustomerEntity(Byte storeID, String firstName, String lastName, String email, Short addressID, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
         this.storeId = storeID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
+        this.addressId = addressID;
         this.active = active;
         this.createDate = createDate;
+        this.lastUpdate = createDate;
     }
 
     public CustomerEntity(Short customerId, Byte storeId, String firstName, String lastName, String email, Short addressId, Boolean active, Timestamp createDate, Timestamp lastUpdate) {
