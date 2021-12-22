@@ -4,13 +4,16 @@ import Entities.*;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.persistence.*;
+import javax.swing.text.html.ImageView;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -202,7 +205,6 @@ public class EFDb extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         stg = primaryStage;
-
         VBox vbox = new VBox();
 
         TextField tfUserName = new TextField();
@@ -212,10 +214,11 @@ public class EFDb extends Application {
         Button bLogin = new Button();
         bLogin.setText("Log in");
         Label lLogInAnswer = new Label();
-
+        vbox.setAlignment(Pos.CENTER);
         vbox.getChildren().addAll(tfUserName, tfPassword, bLogin, lLogInAnswer);
 
         BorderPane logIn = new BorderPane(vbox);
+
 
         Scene scene = new Scene(logIn, 200, 200);
         primaryStage.setTitle("EFDb");
@@ -234,36 +237,39 @@ public class EFDb extends Application {
     }
 
     private void createHomeScene(Stage primaryStage) {
-        BorderPane homeBorderPane = new BorderPane();
+        AnchorPane homeAnchorPane = new AnchorPane();
+        BorderPane homeBorderPane = new BorderPane(homeAnchorPane);
         HBox buttonBar = new HBox();
         homeBorderPane.setBottom(buttonBar);
 
         Button filmButton = new Button(buttonBar.toString());
         filmButton.setText("Filmer");
+        filmButton.setLayoutX(450);
+        filmButton.setLayoutY(300);
         filmButton.setOnAction(event -> {
             createFilmPage(primaryStage);
         });
-        filmButton.setLayoutX(250);
-        filmButton.setLayoutY(220);
+
 
         Button actorButton = new Button(buttonBar.toString());
         actorButton.setText("Skådespelare");
+        actorButton.setLayoutX(450);
+        actorButton.setLayoutY(300);
         actorButton.setOnAction(event -> {
             createActorPage(primaryStage);
         });
-        actorButton.setLayoutX(250);
-        actorButton.setLayoutY(220);
 
 
         Button customerDbButton = new Button(buttonBar.toString());
         customerDbButton.setText("Kunder");
+        customerDbButton.setLayoutX(450);
+        customerDbButton.setLayoutY(300);
         customerDbButton.setOnAction(event -> {
             createCustomerDbPage(primaryStage);
         });
-        customerDbButton.setLayoutX(250);
-        customerDbButton.setLayoutY(220);
 
         Scene scene2 = new Scene(homeBorderPane,1280,720);
+        buttonBar.setAlignment(Pos.BOTTOM_CENTER);
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
         buttonBar.getChildren().add(customerDbButton);
@@ -310,6 +316,13 @@ public class EFDb extends Application {
         ComboBox comboBox = new ComboBox(olFilmTitles);
         comboBox.setPromptText("Film titlar");
 
+        Label customerSearch = new Label();
+        customerSearch.setText("Search for movie: ");
+        customerSearch.setLayoutX(350);
+        customerSearch.setLayoutY(200);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search... ");
+
         VBox vbox = new VBox();
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -318,7 +331,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(filmTable, comboBox, returnToHome);
+        vbox.getChildren().addAll(customerSearch, searchField, filmTable, comboBox, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene3 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene3);
@@ -349,6 +362,13 @@ public class EFDb extends Application {
         ComboBox comboBox = new ComboBox(olActorNames);
         comboBox.setPromptText("Skådespelare");
 
+        Label customerSearch = new Label();
+        customerSearch.setText("Search for actor: ");
+        customerSearch.setLayoutX(350);
+        customerSearch.setLayoutY(200);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search... ");
+
         VBox vbox = new VBox();
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
@@ -357,7 +377,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(actorTable, comboBox, actorFilterField, returnToHome);
+        vbox.getChildren().addAll(customerSearch, searchField, actorTable, comboBox, actorFilterField, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene4);
@@ -392,12 +412,21 @@ public class EFDb extends Application {
         for (int i = 0; i < olCustomer.size(); i++) {
             customerTable.getItems().add(olCustomer.get(i));
         }
+        AnchorPane anchorPane = new AnchorPane();
+        VBox vbox = new VBox(anchorPane);
 
-        VBox vbox = new VBox();
+        Label customerSearch = new Label();
+        customerSearch.setText("Search for customer: ");
+        customerSearch.setLayoutX(350);
+        customerSearch.setLayoutY(200);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search... ");
+
         Button addCustomerButton = new Button();
         addCustomerButton.setLayoutX(250);
         addCustomerButton.setLayoutY(220);
         addCustomerButton.setText("Add Customer");
+        addCustomerButton.setAlignment(Pos.CENTER_LEFT);
         addCustomerButton.setOnAction(event -> {
             CustomerEntity newCustomer = new CustomerEntity();
             createAddCustomerScene(primaryStage, customerTable);
@@ -409,7 +438,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(customerTable, addCustomerButton, returnToHome);
+        vbox.getChildren().addAll(customerSearch, searchField, customerTable, addCustomerButton, returnToHome);
         BorderPane customerBorderPane = new BorderPane(vbox);
         Scene scene5 = new Scene(customerBorderPane, 1280, 720);
         primaryStage.setScene(scene5);
@@ -425,18 +454,17 @@ public class EFDb extends Application {
 
             Query queryAddressID = entityManager.createNativeQuery("SELECT address_id from address where address = '" + address.getText() + "'");
             Query queryCityID = entityManager.createNativeQuery("SELECT city_id from city where city = '" + city.getText() + "'");
-            Query queryCountyID = entityManager.createNativeQuery("SELECT country_id from country where country = '" + country.getText() + "'");
+            Query queryCountryID = entityManager.createNativeQuery("SELECT country_id from country where country = '" + country.getText() + "'");
 
             Query queryAddress = entityManager.createNativeQuery("INSERT INTO address VALUES ('"+address.getText()+"', '"+district.getText()+"', /*+(short) queryCityID.getFirstResult()+*/ '"+email.getText()+phone.getText()+"', ST_GeomFromText('POINT(-26.66115 40.95858)'), '"+Timestamp.valueOf(LocalDateTime.now())+"', '"+Timestamp.valueOf(LocalDateTime.now())+"')");
             CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),(short) queryAddressID.getFirstResult() ,Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()));
-//            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(),(short) queryCityID.getFirstResult(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
+            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(),(short) queryCityID.getFirstResult(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
             CountryEntity newCustomerCountry = new CountryEntity(country.getText(), Timestamp.valueOf(LocalDateTime.now()));
             CityEntity newCustomerCity = new CityEntity(city.getText(),/*(short) queryCountyID.getFirstResult(),*/ Timestamp.valueOf(LocalDateTime.now()));
             entityManager.persist(newCustomer);
-//            entityManager.persist(newCustomerAddress);
+            entityManager.persist(newCustomerAddress);
             entityManager.persist(newCustomerCountry);
             entityManager.persist(newCustomerCity);
-
 
             transaction.commit();
 
