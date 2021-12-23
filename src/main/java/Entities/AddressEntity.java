@@ -123,7 +123,7 @@ public class AddressEntity {
         this.district = district;
         this.cityId = cityID;
         this.phone = phone;
-        this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        this.location = geometryFactory.createPoint(new Coordinate(10.0, 5.0));
         this.lastUpdate = lastUpdate;
     }
 

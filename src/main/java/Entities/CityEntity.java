@@ -21,6 +21,7 @@ public class CityEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+
     public Short getCityId() {
         return cityId;
     }
@@ -56,8 +57,9 @@ public class CityEntity {
     public CityEntity() {
     }
 
-    public CityEntity(String city, Timestamp lastUpdate) {
+    public CityEntity(String city, Short countryID, Timestamp lastUpdate) {
         this.city = city;
+        this.countryId = countryID;
         this.lastUpdate = lastUpdate;
     }
 

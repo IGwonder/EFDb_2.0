@@ -456,15 +456,22 @@ public class EFDb extends Application {
             Query queryCityID = entityManager.createNativeQuery("SELECT city_id from city where city = '" + city.getText() + "'");
             Query queryCountryID = entityManager.createNativeQuery("SELECT country_id from country where country = '" + country.getText() + "'");
 
-            Query queryAddress = entityManager.createNativeQuery("INSERT INTO address VALUES ('"+address.getText()+"', '"+district.getText()+"', /*+(short) queryCityID.getFirstResult()+*/ '"+email.getText()+phone.getText()+"', ST_GeomFromText('POINT(-26.66115 40.95858)'), '"+Timestamp.valueOf(LocalDateTime.now())+"', '"+Timestamp.valueOf(LocalDateTime.now())+"')");
-            CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),(short) queryAddressID.getFirstResult() ,Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()));
-            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(),(short) queryCityID.getFirstResult(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
             CountryEntity newCustomerCountry = new CountryEntity(country.getText(), Timestamp.valueOf(LocalDateTime.now()));
-            CityEntity newCustomerCity = new CityEntity(city.getText(),/*(short) queryCountyID.getFirstResult(),*/ Timestamp.valueOf(LocalDateTime.now()));
-            entityManager.persist(newCustomer);
-            entityManager.persist(newCustomerAddress);
             entityManager.persist(newCustomerCountry);
-            entityManager.persist(newCustomerCity);
+            CityEntity newCustomerCity = new CityEntity(city.getText(),(short) queryCountryID.getFirstResult(), Timestamp.valueOf(LocalDateTime.now()));
+//            entityManager.persist(newCustomerCity);
+            Query queryCity = entityManager.createNativeQuery("INSERT INTO city (city, country_id, last_update) VALUES ('"+city.getText()+"','"+(short) queryCountryID.getFirstResult()+"', '2008-01-01 00:00:01')");
+            Query queryAddress = entityManager.createNativeQuery("INSERT INTO address (address, address2, district, city_id, postal_code, phone, location, last_update) VALUES ('"+address.getText()+"', null, '"+district.getText()+"', '"+(short) queryCityID.getFirstResult()+"', 43145, 07398765, POINT(10.0, 5.0),'2008-01-01 00:00:01' /*Timestamp.valueOf(LocalDateTime.now())*/)");
+//
+//
+//            CustomerEntity newCustomer = new CustomerEntity(Byte.parseByte(storeID.getText()), firstName.getText(), lastName.getText(), email.getText(),(short) queryAddressID.getFirstResult() ,Boolean.parseBoolean(active.getText()), Timestamp.valueOf(LocalDateTime.now()), Timestamp.valueOf(LocalDateTime.now()));
+//            AddressEntity newCustomerAddress = new AddressEntity(address.getText(), district.getText(),(short) queryCityID.getFirstResult(), phone.getText(), Double.parseDouble(longitude.getText()), Double.parseDouble(latitude.getText()), Timestamp.valueOf(LocalDateTime.now()));
+
+
+//            entityManager.persist(newCustomer);
+//            entityManager.persist(newCustomerAddress);
+
+
 
             transaction.commit();
 
@@ -501,10 +508,10 @@ public class EFDb extends Application {
         addressID.setPromptText("address ID");
 
         TextField storeID = new TextField();
-        storeID.setPromptText("Store ID");
+        storeID.setText("1");
 
         TextField active = new TextField();
-        active.setPromptText("active");
+        active.setText("true");
 
         TextField city = new TextField();
         city.setText("Houston");
