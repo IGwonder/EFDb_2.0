@@ -237,10 +237,29 @@ public class EFDb extends Application {
     }
 
     private void createHomeScene(Stage primaryStage) {
-        AnchorPane homeAnchorPane = new AnchorPane();
-        BorderPane homeBorderPane = new BorderPane(homeAnchorPane);
+        TableView homeTable = new TableView();
+        TableColumn<String, FilmEntity> col_title= new TableColumn<>("Title");
+        TableColumn<Date, FilmEntity> col_releaseYear= new TableColumn<>("Release Year");
+        TableColumn<Short, FilmEntity> col_length = new TableColumn<>("Length");
+        TableColumn<Byte, FilmEntity> col_languageID= new TableColumn<>("Language");
+        TableColumn<BigDecimal, FilmEntity> col_rentalRate = new TableColumn<>("Rental Rate");
+        TableColumn<String, FilmEntity> col_rating = new TableColumn<>("Rating");
+
+        col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
+        col_releaseYear.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
+        col_languageID.setCellValueFactory(new PropertyValueFactory<>("languageId"));
+        col_rentalRate.setCellValueFactory(new PropertyValueFactory<>("rentalRate"));
+        col_length.setCellValueFactory(new PropertyValueFactory<>("length"));
+        col_rating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+
+        homeTable.getColumns().addAll(col_title, col_releaseYear, col_languageID, col_rentalRate, col_length, col_rating);
+
+//        for (int i = 0; i < olFilms.size(); i++){
+//            homeTable.getItems().add(olFilms.get(i));
+//        }
+
         HBox buttonBar = new HBox();
-        homeBorderPane.setBottom(buttonBar);
+
 
         Button filmButton = new Button(buttonBar.toString());
         filmButton.setText("Filmer");
@@ -268,11 +287,15 @@ public class EFDb extends Application {
             createCustomerDbPage(primaryStage);
         });
 
-        Scene scene2 = new Scene(homeBorderPane,1280,720);
         buttonBar.setAlignment(Pos.BOTTOM_CENTER);
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
         buttonBar.getChildren().add(customerDbButton);
+
+        BorderPane homeBorderPane = new BorderPane();
+        homeBorderPane.setTop(homeTable);
+        homeBorderPane.setBottom(buttonBar);
+        Scene scene2 = new Scene(homeBorderPane,1280,720);
         primaryStage.setScene(scene2);
         primaryStage.show();
     }
