@@ -14,8 +14,10 @@ import javafx.stage.Stage;
 
 import javax.persistence.*;
 import javax.swing.text.html.ImageView;
+import javax.xml.soap.Text;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -31,6 +33,7 @@ public class EFDb extends Application {
     static final ObservableList olActorNames = FXCollections.observableArrayList();
     static final ObservableList olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
+    static final ObservableList olRental = FXCollections.observableArrayList();
 
     private static Stage stg;
 
@@ -133,6 +136,7 @@ public class EFDb extends Application {
 
             ActorEntity actor = new ActorEntity(actorID, firstName, lastName, lastUpdate);
             olActors.add(actor);
+
         }
 
     }
@@ -176,6 +180,8 @@ public class EFDb extends Application {
         }
 
     }
+
+
 
     public static void getTablesFromDatabase(){
         EntityManager entityManager = emFactory.createEntityManager();
@@ -239,13 +245,15 @@ public class EFDb extends Application {
     private void createHomeScene(Stage primaryStage) {
         AnchorPane homeAnchorPane = new AnchorPane();
         BorderPane homeBorderPane = new BorderPane(homeAnchorPane);
+        TextField textField = new TextField();
         HBox buttonBar = new HBox();
+        VBox vBox = new VBox();
         homeBorderPane.setBottom(buttonBar);
 
         Button filmButton = new Button(buttonBar.toString());
         filmButton.setText("Filmer");
-        filmButton.setLayoutX(450);
-        filmButton.setLayoutY(300);
+        filmButton.setLayoutX(250);
+        filmButton.setLayoutY(180);
         filmButton.setOnAction(event -> {
             createFilmPage(primaryStage);
         });
@@ -253,8 +261,8 @@ public class EFDb extends Application {
 
         Button actorButton = new Button(buttonBar.toString());
         actorButton.setText("Skådespelare");
-        actorButton.setLayoutX(450);
-        actorButton.setLayoutY(300);
+        actorButton.setLayoutX(250);
+        actorButton.setLayoutY(180);
         actorButton.setOnAction(event -> {
             createActorPage(primaryStage);
         });
@@ -262,10 +270,18 @@ public class EFDb extends Application {
 
         Button customerDbButton = new Button(buttonBar.toString());
         customerDbButton.setText("Kunder");
-        customerDbButton.setLayoutX(450);
-        customerDbButton.setLayoutY(300);
+        customerDbButton.setLayoutX(250);
+        customerDbButton.setLayoutY(180);
         customerDbButton.setOnAction(event -> {
             createCustomerDbPage(primaryStage);
+        });
+
+        Button rentalButton = new Button(buttonBar.toString());
+        customerDbButton.setText("Rental");
+        customerDbButton.setLayoutX(250);
+        customerDbButton.setLayoutY(180);
+        customerDbButton.setOnAction(event -> {
+            createRentalPage(primaryStage);
         });
 
         Scene scene2 = new Scene(homeBorderPane,1280,720);
@@ -273,8 +289,43 @@ public class EFDb extends Application {
         buttonBar.getChildren().add(filmButton);
         buttonBar.getChildren().add(actorButton);
         buttonBar.getChildren().add(customerDbButton);
+        buttonBar.getChildren().add(rentalButton);
+
         primaryStage.setScene(scene2);
         primaryStage.show();
+    }
+
+    private void createRentalPage(Stage primaryStage) {
+        TableView rentalTable = new TableView();
+        TableColumn<Short, RentalEntity> col_rentalId = new TableColumn<>("Rental ID");
+        TableColumn<Date, RentalEntity> col_rentalDate= new TableColumn<>("Rental Date");
+        TableColumn<Short, RentalEntity> col_inventoryId= new TableColumn<>("Inventory");
+        TableColumn<Short, RentalEntity> col_customerId= new TableColumn<>("Customer ID");
+        TableColumn<Date, RentalEntity> col_returnDate= new TableColumn<>("Return Date");
+        TableColumn<Short, RentalEntity> col_staffId= new TableColumn<>("Staff ID");
+        TableColumn<Date, RentalEntity> col_lastUpdate= new TableColumn<>("Last Update");
+
+        col_rentalId.setCellValueFactory(new PropertyValueFactory<>("Rental ID"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Rental Date"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Inventory ID"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Customer ID"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Return Date"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Staff ID"));
+        col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("Last Update"));
+
+        rentalTable.getColumns().addAll(col_rentalId, col_rentalDate, col_inventoryId, col_customerId, col_returnDate, col_staffId, col_staffId, col_lastUpdate);
+
+        for (int i = 0; i < olRental.size(); i++){
+            rentalTable.getItems().add(olRental.get(i));
+        }
+        VBox vBox = new VBox();
+        vBox.setAlignment(Pos.CENTER);
+        BorderPane rentalBorderPane = new BorderPane(vBox);
+        vBox.getChildren().addAll(rentalTable);
+        Scene scene9 = new Scene(rentalBorderPane, 1280, 720);
+        primaryStage.setScene(scene9);
+
+
     }
 
     private void createFilmPage(Stage primaryStage){
@@ -316,12 +367,20 @@ public class EFDb extends Application {
         ComboBox comboBox = new ComboBox(olFilmTitles);
         comboBox.setPromptText("Film titlar");
 
-        Label customerSearch = new Label();
-        customerSearch.setText("Search for movie: ");
-        customerSearch.setLayoutX(350);
-        customerSearch.setLayoutY(200);
+        Label searchForMovie = new Label();
+        searchForMovie.setText("Search for movie: ");
+        searchForMovie.setLayoutX(350);
+        searchForMovie.setLayoutY(200);
         TextField searchField = new TextField();
         searchField.setPromptText("Search... ");
+
+        Button searchButton = new Button();
+        searchButton.setLayoutX(250);
+        searchButton.setLayoutX(220);
+        searchButton.setText("Search");
+        searchButton.setOnAction(event -> {
+            searchField.getText();
+        });
 
         VBox vbox = new VBox();
         Button returnToHome = new Button();
@@ -331,7 +390,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(customerSearch, searchField, filmTable, comboBox, returnToHome);
+        vbox.getChildren().addAll(searchForMovie, searchField, searchButton, filmTable, comboBox, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene3 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene3);
@@ -340,6 +399,7 @@ public class EFDb extends Application {
 
     private void createActorPage(Stage primaryStage){
         TextField actorFilterField = new TextField();
+        Button applyFilter = new Button();
 
         TableView actorTable = new TableView();
         TableColumn<Short, ActorEntity> col_actorID = new TableColumn<>("Actor ID");
@@ -357,7 +417,6 @@ public class EFDb extends Application {
         for (int i = 0; i < olActors.size(); i++) {
             actorTable.getItems().add(olActors.get(i));
         }
-
 
         ComboBox comboBox = new ComboBox(olActorNames);
         comboBox.setPromptText("Skådespelare");
@@ -377,6 +436,14 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
+
+        applyFilter.setLayoutX(250);
+        applyFilter.setLayoutY(220);
+        applyFilter.setText("Search");
+        applyFilter.setOnAction(event -> {
+            actorFilterField.getText();
+        });
+
         vbox.getChildren().addAll(customerSearch, searchField, actorTable, comboBox, actorFilterField, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
