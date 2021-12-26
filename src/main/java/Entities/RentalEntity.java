@@ -1,72 +1,60 @@
 package Entities;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Objects;
 
-public class RentalEntity {
 
-
+    @Entity
+    @Table(name = "rental", schema = "sakila", catalog = "")
+    public class RentalEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 @Id
 @Column(name = "rental_id")
-private Short rentalId;
+private Integer rentalId;
 
-    @Column(name = "title")
-    private String title;
-
-    @Column(name = "description")
-    private Date rentalDate;
+    @Column(name = "rental_date")
+    private Timestamp rentalDate;
 
     @Column(name = "inventory_id")
-    private Short inventoryId;
+    private Integer inventoryId;
 
     @Column(name = "customer_id")
     private Short customerId;
 
     @Column(name = "return_date")
-    private Date returnDate;
+    private Timestamp returnDate;
 
     @Column(name = "staff_id")
-    private Short staffId;
+    private Byte staffId;
 
     @Column(name = "last_update")
-    private Date lastUpdate;
+    private Timestamp lastUpdate;
 
-    public Short getRentalId() {
+    public Integer getRentalId() {
         return rentalId;
     }
 
-    public void setRentalId(Short rentalId) {
+    public void setRentalId(Integer rentalId) {
         this.rentalId = rentalId;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public Date getRentalDate() {
+    public Timestamp getRentalDate() {
         return rentalDate;
     }
 
-    public void setRentalDate(Date rentalDate) {
+    public void setRentalDate(Timestamp rentalDate) {
         this.rentalDate = rentalDate;
     }
 
-    public Short getInventoryId() {
+    public Integer getInventoryId() {
         return inventoryId;
     }
 
-    public void setInventoryId(Short inventoryId) {
+    public void setInventoryId(Integer inventoryId) {
         this.inventoryId = inventoryId;
     }
 
@@ -78,30 +66,30 @@ private Short rentalId;
         this.customerId = customerId;
     }
 
-    public Date getReturnDate() {
+    public Timestamp getReturnDate() {
         return returnDate;
     }
 
-    public void setReturnDate(Date returnDate) {
+    public void setReturnDate(Timestamp returnDate) {
         this.returnDate = returnDate;
     }
 
-    public Short getStaffId() {
+    public Byte getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(Short staffId) {
+    public void setStaffId(Byte staffId) {
         this.staffId = staffId;
     }
 
-    public Date getLastUpdate() {
+    public Timestamp getLastUpdate() {
         return lastUpdate;
     }
 
-    public void setLastUpdate(Date lastUpdate) {
+    public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
-    public RentalEntity(Short rentalId, Date rentalDate, Short inventoryId, Short customerId, Date returnDate, Short staffId, Date lastUpdate) {
+    public RentalEntity(Integer rentalId, Timestamp rentalDate, Integer inventoryId, Short customerId, Timestamp returnDate, Byte staffId, Timestamp lastUpdate) {
         this.rentalId = rentalId;
         this.rentalDate = rentalDate;
         this.inventoryId = inventoryId;
