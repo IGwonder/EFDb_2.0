@@ -668,7 +668,7 @@ public class EFDb extends Application {
         TableColumn<String, ActorEntity> col_firstName = new TableColumn<>("First Name");
         TableColumn<String, ActorEntity> col_lastName = new TableColumn<>("Last Name");
         TableColumn<Timestamp, ActorEntity> col_lastUpdate = new TableColumn<>("Last Update");
-        TableColumn<String, FilmActorEntity> col_actorMovies = new TableColumn<>("Movies");
+        TableColumn<String, ActorEntity> col_actorMovies = new TableColumn<>("Movies");
 
         col_actorID.setCellValueFactory(new PropertyValueFactory<>("actorId"));
         col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
