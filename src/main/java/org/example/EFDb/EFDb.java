@@ -9,28 +9,26 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javax.persistence.*;
-import javax.swing.text.html.ImageView;
-import javax.xml.soap.Text;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Blob;
 import java.sql.Date;
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.math.BigInteger;
 
 public class EFDb extends Application {
 
     private static final EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("hibernate");
 
+    static final ObservableList<HomePageInfoEntity> olHome = FXCollections.observableArrayList();
+    static final ObservableList olTop10Films = FXCollections.observableArrayList();
     static final ObservableList olFilms = FXCollections.observableArrayList();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
@@ -38,6 +36,7 @@ public class EFDb extends Application {
     static final ObservableList olCustomer = FXCollections.observableArrayList();
     static final ObservableList olRental = FXCollections.observableArrayList();
     static final ObservableList<PaymentRentalEntity> olPaymentRental = FXCollections.observableArrayList();
+    static final ObservableList olLanguage = FXCollections.observableArrayList();
 
     private static Stage stg;
 
@@ -105,6 +104,68 @@ public class EFDb extends Application {
         }
     }
 
+    public static void getHomePageInfo(EntityManager entityManager){
+        Query filmIDQuery = entityManager.createNativeQuery("SELECT film_id FROM film");
+        Query filmTitleQuery = entityManager.createNativeQuery("SELECT title FROM film INNER JOIN inventory ON film.film_id = inventory.film_id group by film.title;");
+        Query filmReleaseYearQuery = entityManager.createNativeQuery("SELECT release_year FROM film INNER JOIN inventory ON film.film_id = inventory.film_id group by film.title;");
+        Query languageNameQuery = entityManager.createNativeQuery("SELECT name FROM film INNER JOIN language ON film.language_id = language.language_id ORDER BY film.title;");
+        Query filmRentalRateQuery = entityManager.createNativeQuery("SELECT rental_rate FROM film INNER JOIN inventory ON film.film_id = inventory.film_id group by film.title;");
+        Query filmLengthQuery = entityManager.createNativeQuery("SELECT length FROM film INNER JOIN inventory ON film.film_id = inventory.film_id group by film.title;");
+        Query filmRatingQuery = entityManager.createNativeQuery("SELECT rating FROM film INNER JOIN inventory ON film.film_id = inventory.film_id group by film.title;");
+        Query totalCopiesQuery = entityManager.createNativeQuery("select count(film_id) from inventory group by film_id order by film_id asc;");
+        Query missingFilmIdsQuery = entityManager.createNativeQuery("SELECT film_id FROM rental INNER JOIN inventory ON inventory.inventory_id = rental.inventory_id WHERE return_date is null group by film_id order by film_id;");
+        Query numberOfMissingFilmCopiesQuery = entityManager.createNativeQuery("SELECT count(film_id) FROM rental INNER JOIN inventory ON inventory.inventory_id = rental.inventory_id WHERE return_date is null group by film_id order by film_id;");
+        Query top10FilmsQuery = entityManager.createNativeQuery("SELECT title FROM inventory INNER JOIN rental ON rental.inventory_id = inventory.inventory_id INNER JOIN film ON film.film_id = inventory.film_id GROUP BY title ORDER BY count(rental_id) desc limit 10;");
+
+        List<Short> filmIDList = filmIDQuery.getResultList();
+        List<String> filmTitleList = filmTitleQuery.getResultList();
+        List<Date> filmReleaseYearList = filmReleaseYearQuery.getResultList();
+        List<String> languageNameList = languageNameQuery.getResultList();
+        List<BigDecimal> filmRentalRateList = filmRentalRateQuery.getResultList();
+        List<Short> filmLengthList = filmLengthQuery.getResultList();
+        List<String> filmRatingList = filmRatingQuery.getResultList();
+        List<BigInteger> totalCopiesList = totalCopiesQuery.getResultList();
+        List<Short> missingFilmIdsList = missingFilmIdsQuery.getResultList();
+        List<BigInteger> numberOfMissingFilmCopiesList = numberOfMissingFilmCopiesQuery.getResultList();
+        List<String> top10FilmsList = top10FilmsQuery.getResultList();
+        List<Integer> availableCopiesList = new ArrayList<>();
+
+        ObservableList<HomePageInfoEntity> olMissingFilmCopies = FXCollections.observableArrayList();
+        for (int i = 0; i < missingFilmIdsList.size(); i++){
+            Short missingCopyFilmID = missingFilmIdsList.get(i);
+            BigInteger numberOfMissingCopies = numberOfMissingFilmCopiesList.get(i);
+            HomePageInfoEntity missingFilmCopy = new HomePageInfoEntity(missingCopyFilmID, numberOfMissingCopies);
+            olMissingFilmCopies.add(missingFilmCopy);
+        }
+
+
+        for(int i = 0; i < filmTitleList.size(); i++){
+            Short filmID = filmIDList.get(i);
+            String filmTitle = filmTitleList.get(i);
+            Date releaseYear = filmReleaseYearList.get(i);
+            String languageName = languageNameList.get(i);
+            BigDecimal rentalRate = filmRentalRateList.get(i);
+            Short length = filmLengthList.get(i);
+            String rating = filmRatingList.get(i);
+            BigInteger totalCopies = totalCopiesList.get(i);
+            int availableCopies = totalCopies.intValue();
+            for (HomePageInfoEntity hpObj : olMissingFilmCopies){
+                if (hpObj.getMissingCopyFilmID() == filmID){
+                    availableCopies = totalCopies.intValue() - hpObj.getNumberOfMissingCopies().intValue();
+                }
+            }
+
+            HomePageInfoEntity film = new HomePageInfoEntity(filmTitle, releaseYear, languageName, rentalRate, length, rating, totalCopies, availableCopies);
+            olHome.add(film);
+        }
+
+        for (int i = 0; i < top10FilmsList.size(); i++){
+            String top10Film = top10FilmsList.get(i);
+            HomePageInfoEntity topFilm = new HomePageInfoEntity(top10Film);
+            olTop10Films.add(topFilm);
+        }
+    }
+
     public static void getActorNames(EntityManager entityManager){
 
         Query query = entityManager.createNativeQuery("SELECT first_name FROM actor");
@@ -142,6 +203,26 @@ public class EFDb extends Application {
             olActors.add(actor);
 
         }
+    }
+
+    public static void getLanguage(EntityManager entityManager){
+        Query languageIDQuery = entityManager.createNativeQuery("SELECT language_id FROM language");
+        Query languageNameQuery = entityManager.createNativeQuery("SELECT name FROM language");
+        Query languageLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM language");
+
+        List<Byte> languageIDList = languageIDQuery.getResultList();
+        List<String> languageNameList = languageNameQuery.getResultList();
+        List<Timestamp> languageLastUpdateList = languageLastUpdateQuery.getResultList();
+
+        for(int i = 0; i < languageIDList.size(); i++){
+            Byte languageID = languageIDList.get(i);
+            String name = languageNameList.get(i);
+            Timestamp lastUpdate = languageLastUpdateList.get(i);
+
+            LanguageEntity language = new LanguageEntity(languageID, name, lastUpdate);
+            olLanguage.add(language);
+        }
+
     }
 
     public static void getCustomers(EntityManager entityManager){
@@ -267,6 +348,8 @@ public class EFDb extends Application {
             getActorNames(entityManager);
             getCustomers(entityManager);
             getPaymentRentalInfo(entityManager);
+            getLanguage(entityManager);
+            getHomePageInfo(entityManager);
 
             transaction.commit();
 
@@ -315,12 +398,39 @@ public class EFDb extends Application {
     }
 
     private void createHomeScene(Stage primaryStage) {
-        AnchorPane homeAnchorPane = new AnchorPane();
-        BorderPane homeBorderPane = new BorderPane(homeAnchorPane);
-        TextField textField = new TextField();
+        TableView homeTable = new TableView();
+        TableView top10Table = new TableView<>();
+        TableColumn<String, HomePageInfoEntity> col_title= new TableColumn<>("Title");
+        TableColumn<Date, HomePageInfoEntity> col_releaseYear= new TableColumn<>("Release Date");
+        TableColumn<Short, HomePageInfoEntity> col_length = new TableColumn<>("Length");
+        TableColumn<String, HomePageInfoEntity> col_language= new TableColumn<>("Language");
+//        TableColumn<BigDecimal, HomePageInfoEntity> col_rentalRate = new TableColumn<>("Rental Rate");
+        TableColumn<String, HomePageInfoEntity> col_rating = new TableColumn<>("Rating");
+        TableColumn<BigInteger, HomePageInfoEntity> col_totalCopies = new TableColumn<>("Total Copies Available");
+        TableColumn<Integer, HomePageInfoEntity> col_availableCopies = new TableColumn<>("Number of Copies Available");
+        TableColumn<String, HomePageInfoEntity> col_top10Films = new TableColumn<>("Top 10 of most rented films");
+
+        col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
+        col_releaseYear.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
+        col_language.setCellValueFactory(new PropertyValueFactory<>("language"));
+//        col_rentalRate.setCellValueFactory(new PropertyValueFactory<>("rentalRate"));
+        col_length.setCellValueFactory(new PropertyValueFactory<>("length"));
+        col_rating.setCellValueFactory(new PropertyValueFactory<>("rating"));
+        col_totalCopies.setCellValueFactory(new PropertyValueFactory<>("totalCopies"));
+        col_availableCopies.setCellValueFactory(new PropertyValueFactory<>("availableCopies"));
+        col_top10Films.setCellValueFactory(new PropertyValueFactory<>("top10Films"));
+
+        homeTable.getColumns().addAll(col_title, col_releaseYear, col_language /*col_rentalRate*/, col_length, col_rating, col_totalCopies, col_availableCopies);
+        top10Table.getColumns().addAll(col_top10Films);
+
+        for (int i = 0; i < olHome.size(); i++){
+            homeTable.getItems().addAll(olHome.get(i));
+        }
+        for (int i = 0; i < olTop10Films.size(); i++){
+            top10Table.getItems().add(olTop10Films.get(i));
+        }
+
         HBox buttonBar = new HBox();
-        VBox vBox = new VBox();
-        homeBorderPane.setBottom(buttonBar);
 
         Button filmButton = new Button(buttonBar.toString());
         filmButton.setText("Filmer");
@@ -330,7 +440,6 @@ public class EFDb extends Application {
             createFilmPage(primaryStage);
         });
 
-
         Button actorButton = new Button(buttonBar.toString());
         actorButton.setText("Skådespelare");
         actorButton.setLayoutX(250);
@@ -338,7 +447,6 @@ public class EFDb extends Application {
         actorButton.setOnAction(event -> {
             createActorPage(primaryStage);
         });
-
 
         Button customerDbButton = new Button(buttonBar.toString());
         customerDbButton.setText("Kunder");
@@ -356,13 +464,35 @@ public class EFDb extends Application {
             createRentalPage(primaryStage);
         });
 
-        Scene scene2 = new Scene(homeBorderPane,1280,720);
         buttonBar.setAlignment(Pos.BOTTOM_CENTER);
-        buttonBar.getChildren().add(filmButton);
-        buttonBar.getChildren().add(actorButton);
-        buttonBar.getChildren().add(customerDbButton);
-        buttonBar.getChildren().add(rentalButton);
+        buttonBar.getChildren().addAll(filmButton, actorButton, customerDbButton, rentalButton);
 
+        VBox vBoxTop10Table = new VBox(top10Table);
+        VBox vBoxSearch = new VBox();
+        TextField tfSearchFilm = new TextField();
+        TextField tfFilmResult = new TextField();
+        TextField tfRentalRate = new TextField();
+        tfSearchFilm.setPromptText("Search film title");
+        tfFilmResult.setPromptText("Available Copies");
+        tfRentalRate.setPromptText("Rental Rate");
+        Button searchButton = new Button("Search...");
+        vBoxSearch.getChildren().addAll(tfSearchFilm, tfFilmResult, tfRentalRate, searchButton);
+        searchButton.setOnAction(event -> {
+            for (HomePageInfoEntity hpObj : olHome){
+                if (tfSearchFilm.getText().equalsIgnoreCase(hpObj.getTitle())) {
+                    tfFilmResult.setText("Available Copies: "+hpObj.getAvailableCopies());
+                    tfRentalRate.setText("Rental Rate: "+hpObj.getRentalRate()+" USD");
+                }
+            }
+        });
+        HBox hBoxTableAndSearch = new HBox();
+        hBoxTableAndSearch.getChildren().addAll(homeTable,vBoxSearch);
+
+        BorderPane homeBorderPane = new BorderPane();
+        homeBorderPane.setLeft(hBoxTableAndSearch);
+        homeBorderPane.setRight(vBoxTop10Table);
+        homeBorderPane.setBottom(buttonBar);
+        Scene scene2 = new Scene(homeBorderPane,1280,720);
         primaryStage.setScene(scene2);
         primaryStage.show();
     }
@@ -579,7 +709,6 @@ public class EFDb extends Application {
         col_activeMember.setCellValueFactory(new PropertyValueFactory<>("active"));
         col_createDate.setCellValueFactory(new PropertyValueFactory<>("createDate"));
         col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
-
 
         customerTable.getColumns().addAll(col_customerID, col_StoreID, col_firstName, col_lastName, col_email, col_addressID, col_activeMember, col_createDate, col_lastUpdate);
 
