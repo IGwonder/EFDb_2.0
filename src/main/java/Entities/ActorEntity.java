@@ -21,6 +21,38 @@ public class ActorEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+    private Short actorIdFilm;
+
+    private String filmTitles;
+
+    public String getActorFilms() {
+        return actorFilms;
+    }
+
+    public void setActorFilms(String actorFilms) {
+        this.actorFilms = actorFilms;
+    }
+
+    private String actorFilms;
+
+    public Short getActorIdFilm() {
+        return actorIdFilm;
+    }
+
+    public void setActorIdFilm(Short actorIdFilm) {
+        this.actorIdFilm = actorIdFilm;
+    }
+
+    public String getFilmTitles() {
+        return filmTitles;
+    }
+
+    public void setFilmTitles(String filmTitles) {
+        this.filmTitles = filmTitles;
+    }
+
+
+
     public Short getActorId() {
         return actorId;
     }
@@ -53,11 +85,17 @@ public class ActorEntity {
         this.lastUpdate = lastUpdate;
     }
 
-    public ActorEntity(Short actorId, String firstName, String lastName, Timestamp lastUpdate) {
+    public ActorEntity(Short actorId, String firstName, String lastName, Timestamp lastUpdate, String actorFilms) {
         this.actorId = actorId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.lastUpdate = lastUpdate;
+        this.actorFilms = actorFilms;
+    }
+
+    public ActorEntity(Short actorIdFilm, String filmTitles) {
+        this.actorIdFilm = actorIdFilm;
+        this.filmTitles = filmTitles;
     }
 
     public ActorEntity() {
