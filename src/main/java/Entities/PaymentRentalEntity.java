@@ -6,47 +6,63 @@ import java.sql.Date;
 import java.sql.Timestamp;
 public class PaymentRentalEntity {
 
-    private Integer paymentId;
+    private Short paymentId;
 
-private Integer customerId;
+    private Short customerId;
 
-private Integer staffId;
+    private Byte staffId;
 
-private Integer rentalId;
+    private Integer rentalId;
 
-private Timestamp returnDate;
+    private Timestamp returnDate;
 
-private Integer inventoryId;
+    private Integer inventoryId;
 
-private Timestamp rentalDate;
+    private Timestamp rentalDate;
 
-private BigDecimal amount;
+    private BigDecimal amount;
 
-private Timestamp paymentDate;
+    private Timestamp paymentDate;
 
-private Timestamp lastUpdate;
+    private Timestamp lastUpdate;
 
-    public Integer getPaymentId() {
+    private Short filmId;
+
+
+    public PaymentRentalEntity(Short paymentId, Integer rentalId, Timestamp rentalDate, Integer inventoryId, Short customerId, Timestamp returnDate, Byte staffId, BigDecimal amount, Timestamp paymentDate, Short filmId) {
+        this.paymentId = paymentId;
+        this.customerId = customerId;
+        this.staffId = staffId;
+        this.rentalId = rentalId;
+        this.returnDate = returnDate;
+        this.inventoryId = inventoryId;
+        this.rentalDate = rentalDate;
+        this.amount = amount;
+        this.paymentDate = paymentDate;
+        this.filmId = filmId;
+    }
+
+    public Short getPaymentId() {
         return paymentId;
     }
 
-    public void setPaymentId(Integer paymentId) {
+    public void setPaymentId(Short paymentId) {
         this.paymentId = paymentId;
     }
 
-    public Integer getCustomerId() {
+    public Short getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(Short customerId) {
         this.customerId = customerId;
     }
 
-    public Integer getStaffId() {
+    public Byte getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(Integer staffId) {
+    public void setStaffId(Byte staffId) {
         this.staffId = staffId;
     }
 
@@ -106,14 +122,27 @@ private Timestamp lastUpdate;
     public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
-    public PaymentRentalEntity(Integer paymentId, Integer customerId, Integer staffId, Integer rentalId, BigDecimal amount, Timestamp paymentDate, Timestamp lastUpdate, Integer inventoryId) {
+
+    public Short getFilmId() {
+        return filmId;
+    }
+
+    public void setFilmId(Short filmId) {
+        this.filmId = filmId;
+    }
+
+    public PaymentRentalEntity(Short paymentId, Short customerId, Byte staffId, Integer rentalId, Timestamp returnDate, Integer inventoryId, Timestamp rentalDate, BigDecimal amount, Timestamp paymentDate, Timestamp lastUpdate, Short filmId) {
         this.paymentId = paymentId;
         this.customerId = customerId;
         this.staffId = staffId;
         this.rentalId = rentalId;
+        this.returnDate = returnDate;
+        this.inventoryId = inventoryId;
+        this.rentalDate = rentalDate;
         this.amount = amount;
         this.paymentDate = paymentDate;
         this.lastUpdate = lastUpdate;
-    }
+        this.filmId = filmId;
 
+    }
 }

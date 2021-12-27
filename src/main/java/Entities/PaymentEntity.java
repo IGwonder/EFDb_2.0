@@ -12,13 +12,13 @@ public class PaymentEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "payment_id")
-    private Integer paymentId;
+    private Short paymentId;
 
     @Column(name = "customer_id")
-    private Integer customerId;
+    private Short customerId;
 
     @Column(name = "staff_id")
-    private Integer staffId;
+    private Byte staffId;
 
     @Column(name = "rental_id")
     private Integer rentalId;
@@ -32,27 +32,27 @@ public class PaymentEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
-    public Integer getPaymentId() {
+    public Short getPaymentId() {
         return paymentId;
     }
 
-    public void setPaymentId(Integer paymentId) {
+    public void setPaymentId(Short paymentId) {
         this.paymentId = paymentId;
     }
 
-    public Integer getCustomerId() {
+    public Short getCustomerId() {
         return customerId;
     }
 
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(Short customerId) {
         this.customerId = customerId;
     }
 
-    public Integer getStaffId() {
+    public Byte getStaffId() {
         return staffId;
     }
 
-    public void setStaffId(Integer staffId) {
+    public void setStaffId(Byte staffId) {
         this.staffId = staffId;
     }
 
@@ -87,7 +87,7 @@ public class PaymentEntity {
     public void setLastUpdate(Timestamp lastUpdate) {
         this.lastUpdate = lastUpdate;
     }
-    public PaymentEntity(Integer paymentId, Integer customerId, Integer staffId, Integer rentalId, BigDecimal amount, Timestamp paymentDate, Timestamp lastUpdate) {
+    public PaymentEntity(Short paymentId, Short customerId, Byte staffId, Integer rentalId, BigDecimal amount, Timestamp paymentDate, Timestamp lastUpdate) {
         this.paymentId = paymentId;
         this.customerId = customerId;
         this.staffId = staffId;

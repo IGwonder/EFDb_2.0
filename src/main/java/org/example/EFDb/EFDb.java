@@ -23,7 +23,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class EFDb extends Application {
 
@@ -35,6 +37,7 @@ public class EFDb extends Application {
     static final ObservableList olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
     static final ObservableList olRental = FXCollections.observableArrayList();
+    static final ObservableList<PaymentRentalEntity> olPaymentRental = FXCollections.observableArrayList();
 
     private static Stage stg;
 
@@ -139,7 +142,6 @@ public class EFDb extends Application {
             olActors.add(actor);
 
         }
-
     }
 
     public static void getCustomers(EntityManager entityManager){
@@ -163,7 +165,6 @@ public class EFDb extends Application {
         List<Timestamp> createDateList = createDateQuery.getResultList();
         List<Timestamp> lastUpdateList = lastUpdateQuery.getResultList();
 
-
         for(int i = 0; i < customerIDList.size(); i++){
             Short customerID = customerIDList.get(i);
             Byte storeID = storeIDList.get(i);
@@ -182,42 +183,77 @@ public class EFDb extends Application {
 
     }
 
-    public static void getRentalInfo(EntityManager entityManager) {
-        Query rentalIDQuery = entityManager.createNativeQuery("SELECT rental_id FROM rental");
+//    public static void getRentalInfo(EntityManager entityManager) {
+//        Query rentalIDQuery = entityManager.createNativeQuery("SELECT rental_id FROM rental");
+//        Query rentalDateQuery = entityManager.createNativeQuery("SELECT rental_date FROM rental");
+//        Query inventoryIDQuery = entityManager.createNativeQuery("SELECT inventory_id FROM rental");
+//        Query customerIDQuery = entityManager.createNativeQuery("SELECT customer_id FROM rental");
+//        Query returnDateQuery = entityManager.createNativeQuery("SELECT return_date FROM rental");
+//        Query staffIDQuery = entityManager.createNativeQuery("SELECT staff_id FROM rental");
+//        Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM rental");
+//
+//        List<Integer> rentalIDList = rentalIDQuery.getResultList();
+//        List<Timestamp> rentalDateList = rentalDateQuery.getResultList();
+//        List<Integer> rentalInventoryList = inventoryIDQuery.getResultList();
+//        List<Short> rentalCustomerIDList = customerIDQuery.getResultList();
+//        List<Timestamp> rentalReturnDateList = returnDateQuery.getResultList();
+//        List<Byte> rentalStaffIDList = staffIDQuery.getResultList();
+//        List<Timestamp> rentallastUpdateList = lastUpdateQuery.getResultList();
+//
+//        for (int i = 0; i < rentalIDList.size(); i++) {
+//            Integer rentalID = rentalIDList.get(i);
+//            System.out.println(rentalID);
+//            Timestamp rentalDate = rentalDateList.get(i);
+//            Integer inventoryID = rentalInventoryList.get(i);
+//            Short customerID = rentalCustomerIDList.get(i);
+//            Timestamp returnDate = rentalReturnDateList.get(i);
+//            Byte staffID = rentalStaffIDList.get(i);
+//            Timestamp lastUpdate = rentallastUpdateList.get(i);
+//
+//            RentalEntity paymentRental = new RentalEntity(rentalID, rentalDate, inventoryID, customerID, returnDate, staffID, lastUpdate);
+//            olPaymentRental.add(paymentRental);
+//        }
+//    }
+
+    public static void getPaymentRentalInfo(EntityManager entityManager){
+        Query rentalIDQuery = entityManager.createNativeQuery("SELECT rental.rental_id FROM rental INNER JOIN payment ON payment.rental_id = rental.rental_id ORDER BY payment_id");
+        Query paymentIDQuery = entityManager.createNativeQuery("SELECT payment.payment_id FROM payment INNER JOIN rental ON payment.payment_id = rental.rental_id");
         Query rentalDateQuery = entityManager.createNativeQuery("SELECT rental_date FROM rental");
         Query inventoryIDQuery = entityManager.createNativeQuery("SELECT inventory_id FROM rental");
         Query customerIDQuery = entityManager.createNativeQuery("SELECT customer_id FROM rental");
         Query returnDateQuery = entityManager.createNativeQuery("SELECT return_date FROM rental");
         Query staffIDQuery = entityManager.createNativeQuery("SELECT staff_id FROM rental");
-        Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM rental");
+        Query amountQuery = entityManager.createNativeQuery("SELECT amount FROM payment");
+        Query paymentDateIDQuery = entityManager.createNativeQuery("SELECT payment_date FROM payment");
+        Query filmIdQuery = entityManager.createNativeQuery("SELECT film_id FROM rental INNER JOIN payment ON payment.rental_id = rental.rental_id INNER JOIN inventory ON inventory.inventory_id = rental.inventory_id");
 
         List<Integer> rentalIDList = rentalIDQuery.getResultList();
+        List<Short> paymentIDList = paymentIDQuery.getResultList();
         List<Timestamp> rentalDateList = rentalDateQuery.getResultList();
-        List<Integer> rentalInventoryList = inventoryIDQuery.getResultList();
-        List<Short> rentalCustomerIDList = customerIDQuery.getResultList();
-        List<Timestamp> rentalReturnDateList = returnDateQuery.getResultList();
-        List<Byte> rentalStaffIDList = staffIDQuery.getResultList();
-        List<Timestamp> rentallastUpdateList = lastUpdateQuery.getResultList();
+        List<Integer> inventoryIDList = inventoryIDQuery.getResultList();
+        List<Short> customerIDList = customerIDQuery.getResultList();
+        List<Timestamp> returnDateList = returnDateQuery.getResultList();
+        List<Byte> staffIDList = staffIDQuery.getResultList();
+        List<BigDecimal> amountList = amountQuery.getResultList();
+        List<Timestamp> paymentDateList = paymentDateIDQuery.getResultList();
+        List<Short> filmIDList = filmIdQuery.getResultList();
 
-        for (int i = 0; i < rentalIDList.size(); i++) {
-            Integer rentalID = rentalIDList.get(i);
-            System.out.println(rentalID);
+        for(int i = 0; i < rentalIDList.size(); i++){
+            Integer rentalId = rentalIDList.get(i);
+            Short paymentId = paymentIDList.get(i);
             Timestamp rentalDate = rentalDateList.get(i);
-            Integer inventoryID = rentalInventoryList.get(i);
-            Short customerID = rentalCustomerIDList.get(i);
-            Timestamp returnDate = rentalReturnDateList.get(i);
-            Byte staffID = rentalStaffIDList.get(i);
-            Timestamp lastUpdate = rentallastUpdateList.get(i);
+            Integer inventoryId = inventoryIDList.get(i);
+            Short customerId = customerIDList.get(i);
+            Timestamp returnDate = returnDateList.get(i);
+            Byte staffId = staffIDList.get(i);
+            BigDecimal amount = amountList.get(i);
+            Timestamp paymentDate = paymentDateList.get(i);
+            Short filmId = filmIDList.get(i);
 
-            RentalEntity rental = new RentalEntity(rentalID, rentalDate, inventoryID, customerID, returnDate, staffID, lastUpdate);
-            olRental.add(rental);
+            PaymentRentalEntity rental = new PaymentRentalEntity(paymentId, rentalId, rentalDate, inventoryId, customerId, returnDate, staffId, amount, paymentDate, filmId);
+            olPaymentRental.add(rental);
         }
     }
-
-    public static void getPaymentRentalInfo(){
-
-    }
-
 
     public static void getTablesFromDatabase(){
         EntityManager entityManager = emFactory.createEntityManager();
@@ -230,7 +266,7 @@ public class EFDb extends Application {
             getActors(entityManager);
             getActorNames(entityManager);
             getCustomers(entityManager);
-            getRentalInfo(entityManager);
+            getPaymentRentalInfo(entityManager);
 
             transaction.commit();
 
@@ -261,7 +297,6 @@ public class EFDb extends Application {
         vbox.getChildren().addAll(tfUserName, tfPassword, bLogin, lLogInAnswer);
 
         BorderPane logIn = new BorderPane(vbox);
-
 
         Scene scene = new Scene(logIn, 200, 200);
         primaryStage.setTitle("EFDb");
@@ -334,34 +369,56 @@ public class EFDb extends Application {
 
     private void createRentalPage(Stage primaryStage) {
         TableView rentalTable = new TableView();
-        TableColumn<Integer, RentalEntity> col_rentalId = new TableColumn<>("Rental ID");
-        TableColumn<Timestamp, RentalEntity> col_rentalDate= new TableColumn<>("Rental Date");
-        TableColumn<Integer, RentalEntity> col_inventoryId= new TableColumn<>("Inventory");
-        TableColumn<Integer, RentalEntity> col_customerId= new TableColumn<>("Customer ID");
-        TableColumn<Timestamp, RentalEntity> col_returnDate= new TableColumn<>("Return Date");
-        TableColumn<Byte, RentalEntity> col_staffId= new TableColumn<>("Staff ID");
-        TableColumn<Timestamp, RentalEntity> col_lastUpdate= new TableColumn<>("Last Update");
+        TextField searchBar = new TextField();
+        TextField resultBar = new TextField();
+        Label searchForCustomer = new Label();
+        searchForCustomer.setLayoutX(100);
+        searchForCustomer.setLayoutY(80);
+        searchForCustomer.setText("Search for Customer");
+        searchBar.setPromptText("Search for Customer ID");
+        Button searchButton = new Button();
+        searchButton.setText("Search");
+        TableColumn<Integer, PaymentRentalEntity> col_rentalId = new TableColumn<>("Rental ID");
+        TableColumn<Timestamp, PaymentRentalEntity> col_rentalDate= new TableColumn<>("Rental Date");
+        TableColumn<Short, PaymentRentalEntity> col_filmId= new TableColumn<>("Film ID");
+        TableColumn<Integer, PaymentRentalEntity> col_customerId= new TableColumn<>("Customer ID");
+        TableColumn<Timestamp, PaymentRentalEntity> col_returnDate= new TableColumn<>("Return Date");
+        TableColumn<Byte, PaymentRentalEntity> col_staffId= new TableColumn<>("Staff ID");
+        TableColumn<Short, PaymentRentalEntity> col_paymentId= new TableColumn<>("Payment ID");
+        TableColumn<BigDecimal, PaymentRentalEntity> col_amount= new TableColumn<>("Price");
+        TableColumn<Timestamp, PaymentRentalEntity> col_paymentDate= new TableColumn<>("Payment Date");
 
-        TableColumn<Integer, PaymentEntity> col_paymentId= new TableColumn<>("Payment ID");
-        TableColumn<BigDecimal, PaymentEntity> col_amount= new TableColumn<>("Price");
-        TableColumn<Timestamp, PaymentEntity> col_paymentDate= new TableColumn<>("Payment Date");
 
         col_rentalId.setCellValueFactory(new PropertyValueFactory<>("rentalId"));
         col_rentalDate.setCellValueFactory(new PropertyValueFactory<>("rentalDate"));
-        col_inventoryId.setCellValueFactory(new PropertyValueFactory<>("inventoryId"));
+        col_filmId.setCellValueFactory(new PropertyValueFactory<>("filmId"));
         col_customerId.setCellValueFactory(new PropertyValueFactory<>("customerId"));
         col_returnDate.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
         col_staffId.setCellValueFactory(new PropertyValueFactory<>("staffId"));
-        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
         col_paymentId.setCellValueFactory(new PropertyValueFactory<>("paymentId"));
-        col_amount.setCellValueFactory(new PropertyValueFactory<>("price"));
+        col_amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
         col_paymentDate.setCellValueFactory(new PropertyValueFactory<>("paymentDate"));
 
-        rentalTable.getColumns().addAll(col_rentalId, col_rentalDate, col_inventoryId, col_customerId, col_returnDate, col_staffId, col_lastUpdate, col_amount, col_paymentId, col_paymentDate);
+        rentalTable.getColumns().addAll(col_rentalId, col_rentalDate, col_filmId, col_customerId, col_returnDate, col_staffId, col_amount, col_paymentId, col_paymentDate);
 
-        for (int i = 0; i < olRental.size(); i++){
-            rentalTable.getItems().add(olRental.get(i));
+        for (int i = 0; i < olPaymentRental.size(); i++){
+            rentalTable.getItems().add(olPaymentRental.get(i));
         }
+        searchButton.setOnAction(event -> {
+            StringBuilder sb = new StringBuilder();
+            Set<Short> filmIdList = new HashSet<>();
+            for (PaymentRentalEntity paymentRentalInfo : olPaymentRental){
+                if(searchBar.getText().equals(paymentRentalInfo.getCustomerId().toString())){
+                    filmIdList.add(paymentRentalInfo.getFilmId());
+                }
+            }
+            for (Short filmId : filmIdList){
+                sb.append(filmId.toString()+", ");
+            }
+            resultBar.setText(sb.toString());
+//            resultBar.getItems().add(olFilmId);
+        });
+
         VBox vBox = new VBox();
         vBox.setAlignment(Pos.CENTER);
         Button returnToHome = new Button();
@@ -371,7 +428,7 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vBox.getChildren().addAll(rentalTable, returnToHome);
+        vBox.getChildren().addAll(searchForCustomer, searchBar, resultBar, searchButton, rentalTable, returnToHome);
         BorderPane rentalBorderPane = new BorderPane(vBox);
         Scene scene9 = new Scene(rentalBorderPane, 1280, 720);
         primaryStage.setScene(scene9);
@@ -503,7 +560,7 @@ public class EFDb extends Application {
 
     private void createCustomerDbPage(Stage primaryStage){
         TableView customerTable = new TableView();
-        TableColumn <Short, CustomerEntity> col_customerID = new TableColumn<>("Customer ID");
+        TableColumn <Integer, CustomerEntity> col_customerID = new TableColumn<>("Customer ID");
         TableColumn <Byte, CustomerEntity> col_StoreID= new TableColumn<>("Store ID");
         TableColumn <String, CustomerEntity> col_firstName = new TableColumn<>("First Name");
         TableColumn <String, CustomerEntity> col_lastName = new TableColumn<>("Last Name");
