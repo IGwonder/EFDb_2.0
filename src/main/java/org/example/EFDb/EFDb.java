@@ -32,7 +32,7 @@ public class EFDb extends Application {
     static final ObservableList olFilms = FXCollections.observableArrayList();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
-    static final ObservableList olActors = FXCollections.observableArrayList();
+    static final ObservableList<ActorEntity> olActors = FXCollections.observableArrayList();
     static final ObservableList olCustomer = FXCollections.observableArrayList();
     static final ObservableList olRental = FXCollections.observableArrayList();
     static final ObservableList<PaymentRentalEntity> olPaymentRental = FXCollections.observableArrayList();
@@ -187,19 +187,45 @@ public class EFDb extends Application {
         Query actorFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM actor");
         Query actorLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM actor");
         Query actorLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM actor");
+        Query actorMoviesQuery = entityManager.createNativeQuery("SELECT title FROM film, actor, film_actor\n" +
+                "WHERE film.film_id = film_actor.film_id\n" +
+                "AND film_actor.actor_id = actor.actor_id\n" +
+                "GROUP BY film_actor.film_id;");
+        Query actorIdFilmsQuery = entityManager.createNativeQuery("SELECT actor.actor_id FROM film, actor, film_actor\n" +
+                "WHERE film.film_id = film_actor.film_id\n" +
+                "AND film_actor.actor_id = actor.actor_id\n" +
+                "GROUP BY film_actor.film_id;");
+
 
         List<Short> actorIDList = actorIDQuery.getResultList();
         List<String> actorFirstNameList = actorFirstNameQuery.getResultList();
         List<String> actorLastNameList = actorLastNameQuery.getResultList();
         List<Timestamp> actorLastUpdateList = actorLastUpdateQuery.getResultList();
+        List<String> actorMoviesList = actorMoviesQuery.getResultList();
+        List<Short> actorIdFilmsList = actorIdFilmsQuery.getResultList();
+        ObservableList<ActorEntity> olActorFilms = FXCollections.observableArrayList();
+        for (int j = 0; j < actorMoviesList.size(); j++){
+            Short actorIdFilm = actorIdFilmsList.get(j);
+            String actorMovies = actorMoviesList.get(j);
+            ActorEntity actorFilm = new ActorEntity(actorIdFilm, actorMovies);
+            olActorFilms.add(actorFilm);
+        }
+
 
         for(int i = 0; i < actorIDList.size(); i++){
             Short actorID = actorIDList.get(i);
             String firstName = actorFirstNameList.get(i);
             String lastName = actorLastNameList.get(i);
             Timestamp lastUpdate = actorLastUpdateList.get(i);
+            StringBuilder stringBuilder = new StringBuilder();
+          for (ActorEntity actorFilm : olActorFilms){
+              if (i == actorFilm.getActorIdFilm()) {
+                  stringBuilder.append(actorFilm.getFilmTitles()+", ");
+              }
+          }
+          String actorFilms = stringBuilder.toString();
 
-            ActorEntity actor = new ActorEntity(actorID, firstName, lastName, lastUpdate);
+            ActorEntity actor = new ActorEntity(actorID, firstName, lastName, lastUpdate, actorFilms);
             olActors.add(actor);
 
         }
@@ -636,20 +662,21 @@ public class EFDb extends Application {
 
     private void createActorPage(Stage primaryStage){
         TextField actorFilterField = new TextField();
-        Button applyFilter = new Button();
 
         TableView actorTable = new TableView();
         TableColumn<Short, ActorEntity> col_actorID = new TableColumn<>("Actor ID");
         TableColumn<String, ActorEntity> col_firstName = new TableColumn<>("First Name");
         TableColumn<String, ActorEntity> col_lastName = new TableColumn<>("Last Name");
         TableColumn<Timestamp, ActorEntity> col_lastUpdate = new TableColumn<>("Last Update");
+        TableColumn<String, FilmActorEntity> col_actorMovies = new TableColumn<>("Movies");
 
         col_actorID.setCellValueFactory(new PropertyValueFactory<>("actorId"));
         col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
         col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
         col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
+        col_actorMovies.setCellValueFactory(new PropertyValueFactory<>("actorFilms"));
 
-        actorTable.getColumns().addAll(col_actorID, col_firstName, col_lastName, col_lastUpdate);
+        actorTable.getColumns().addAll(col_actorID, col_firstName, col_lastName, col_actorMovies, col_lastUpdate);
 
         for (int i = 0; i < olActors.size(); i++) {
             actorTable.getItems().add(olActors.get(i));
@@ -666,6 +693,20 @@ public class EFDb extends Application {
         searchField.setPromptText("Search... ");
 
         VBox vbox = new VBox();
+
+        Button searchButton = new Button();
+        searchButton.setText("Search..");
+        searchButton.setLayoutX(250);
+        searchButton.setLayoutY(220);
+        searchButton.setOnAction(event -> {
+            comboBox.getValue();
+            for (ActorEntity actor : olActors){
+                if (comboBox.getValue().equals(actor.getFirstName()+" "+actor.getLastName())){
+                    actorFilterField.setText(actor.getActorFilms());
+                }
+            }
+        });
+
         Button returnToHome = new Button();
         returnToHome.setLayoutX(250);
         returnToHome.setLayoutY(220);
@@ -674,14 +715,8 @@ public class EFDb extends Application {
             createHomeScene(primaryStage);
         });
 
-        applyFilter.setLayoutX(250);
-        applyFilter.setLayoutY(220);
-        applyFilter.setText("Search");
-        applyFilter.setOnAction(event -> {
-            actorFilterField.getText();
-        });
+        vbox.getChildren().addAll(customerSearch, searchField, actorTable, comboBox, searchButton, actorFilterField, returnToHome);
 
-        vbox.getChildren().addAll(customerSearch, searchField, actorTable, comboBox, actorFilterField, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene4 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene4);
