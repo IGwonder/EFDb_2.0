@@ -8,8 +8,6 @@
     <persistence-unit name="hibernate">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <class>org.example.EFDb.EFDb</class>
-        <class>Entities.FilmActorEntityId</class>
-        <class>Entities.FilmActorEntity</class>
         <properties>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/sakila"/>

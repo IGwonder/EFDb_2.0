@@ -29,7 +29,7 @@ public class EFDb extends Application {
 
     static final ObservableList<HomePageInfoEntity> olHome = FXCollections.observableArrayList();
     static final ObservableList olTop10Films = FXCollections.observableArrayList();
-    static final ObservableList olFilms = FXCollections.observableArrayList();
+    static final ObservableList<FilmEntity> olFilms = FXCollections.observableArrayList();
     static final ObservableList olFilmTitles = FXCollections.observableArrayList();
     static final ObservableList olActorNames = FXCollections.observableArrayList();
     static final ObservableList<ActorEntity> olActors = FXCollections.observableArrayList();
@@ -37,6 +37,8 @@ public class EFDb extends Application {
     static final ObservableList olRental = FXCollections.observableArrayList();
     static final ObservableList<PaymentRentalEntity> olPaymentRental = FXCollections.observableArrayList();
     static final ObservableList olLanguage = FXCollections.observableArrayList();
+    ObservableList<FilmEntity> olFilmActor = FXCollections.observableArrayList();
+
 
     private static Stage stg;
 
@@ -60,17 +62,13 @@ public class EFDb extends Application {
         Query filmTitleQuery = entityManager.createNativeQuery("SELECT title FROM film");
         Query filmDescriptionQuery = entityManager.createNativeQuery("SELECT description FROM film");
         Query filmReleaseYearQuery = entityManager.createNativeQuery("SELECT release_year FROM film");
-        Query filmLanguageIDQuery = entityManager.createNativeQuery("SELECT language_id FROM film");
-        Query filmOriginalLanguageIDQuery = entityManager.createNativeQuery("SELECT original_language_id FROM film");
-        Query filmRentalDurationQuery = entityManager.createNativeQuery("SELECT rental_duration FROM film");
-        Query filmRentalRateQuery = entityManager.createNativeQuery("SELECT rental_rate FROM film");
         Query filmLengthQuery = entityManager.createNativeQuery("SELECT length FROM film");
         Query filmReplacementCostQuery = entityManager.createNativeQuery("SELECT replacement_cost FROM film");
         Query filmRatingQuery = entityManager.createNativeQuery("SELECT rating FROM film");
         Query filmSpecialFeaturesQuery = entityManager.createNativeQuery("SELECT special_features FROM film");
         Query filmLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM film");
 
-        Query filmActorIDQuery = entityManager.createNativeQuery("SELECT actor.actor_id FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
+        Query actorFilmIDQuery = entityManager.createNativeQuery("SELECT film.film_id FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
         Query filmFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
         Query filmLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
 
@@ -78,25 +76,21 @@ public class EFDb extends Application {
         List<String> filmTitleList = filmTitleQuery.getResultList();
         List<String> filmDescriptionList = filmDescriptionQuery.getResultList();
         List<Date> filmReleaseYearList = filmReleaseYearQuery.getResultList();
-        List<Byte> filmLanguageIDList = filmLanguageIDQuery.getResultList();
-        List<Byte> filmOriginalLanguageIDList = filmOriginalLanguageIDQuery.getResultList();
-        List<Byte> filmRentalDurationList = filmRentalDurationQuery.getResultList();
-        List<BigDecimal> filmRentalRateList = filmRentalRateQuery.getResultList();
         List<Short> filmLengthList = filmLengthQuery.getResultList();
         List<BigDecimal> filmReplacementCostList = filmReplacementCostQuery.getResultList();
         List<String> filmRatingList = filmRatingQuery.getResultList();
         List<String> filmSpecialFeaturesList = filmSpecialFeaturesQuery.getResultList();
         List<Timestamp> filmLastUpdateList = filmLastUpdateQuery.getResultList();
-        List<Short> filmActorIDList = filmActorIDQuery.getResultList();
+        List<Short> actorFilmIDList = actorFilmIDQuery.getResultList();
         List<String> filmFirstNameList = filmFirstNameQuery.getResultList();
         List<String> filmLastNameList = filmLastNameQuery.getResultList();
 
         ObservableList<FilmEntity> olFilmActor = FXCollections.observableArrayList();
-        for (int i = 0; i < filmActorIDList.size(); i++){
-            Short filmActorID = filmActorIDList.get(i);
+        for (int i = 0; i < actorFilmIDList.size(); i++){
+            Short actorFilmID = actorFilmIDList.get(i);
             String actorFirstName = filmFirstNameList.get(i);
             String actorLastName = filmLastNameList.get(i);
-            FilmEntity filmActor = new FilmEntity(filmActorID, actorFirstName, actorLastName);
+            FilmEntity filmActor = new FilmEntity(actorFilmID, actorFirstName, actorLastName);
             olFilmActor.add(filmActor);
         }
 
@@ -105,25 +99,22 @@ public class EFDb extends Application {
             String filmTitle = filmTitleList.get(i);
             String description = filmDescriptionList.get(i);
             Date releaseYear = filmReleaseYearList.get(i);
-            Byte languageID = filmLanguageIDList.get(i);
-            Byte originalLanguageID = filmOriginalLanguageIDList.get(i);
-            Byte rentalDuration = filmRentalDurationList.get(i);
-            BigDecimal rentalRate = filmRentalRateList.get(i);
             Short length = filmLengthList.get(i);
             BigDecimal replacementCost = filmReplacementCostList.get(i);
             String rating = filmRatingList.get(i);
             String specialFeatures = filmSpecialFeaturesList.get(i);
             Timestamp lastUpdate = filmLastUpdateList.get(i);
+            String actorName = "";
             StringBuilder stringBuilder = new StringBuilder();
-           /* for (FilmEntity filmActor : olFilmActor){
-                System.out.println(filmActor.getActorFirstName());
-                if (i == filmActor.getFilmActorID()) {
-                    stringBuilder.append(filmActor.getActorFirstName() + ", ");
-                    stringBuilder.append(filmActor.getActorLastName() + ", ");
+            for (FilmEntity filmActor : olFilmActor){
+                if (i == filmActor.getActorFilmID()) {
+                    stringBuilder.append(filmActor.getActorFirstName() + " " + filmActor.getActorLastName());
+
                 }
             }
-            String filmActors = stringBuilder.toString();*/
-            FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, languageID, originalLanguageID, rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures, lastUpdate/*, filmActors*/);
+            actorName = stringBuilder.toString();
+
+            FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, length, replacementCost, rating, specialFeatures, lastUpdate, actorName);
             olFilms.add(film);
         }
     }
@@ -616,15 +607,13 @@ public class EFDb extends Application {
     }
 
     private void createFilmPage(Stage primaryStage){
+
         TableView filmTable = new TableView();
         TableColumn<Short, FilmEntity> col_filmID = new TableColumn<>("Film ID");
         TableColumn<String, FilmEntity> col_title= new TableColumn<>("Title");
         TableColumn<String, FilmEntity> col_description= new TableColumn<>("Description");
         TableColumn<Date, FilmEntity> col_releaseYear= new TableColumn<>("Release Year");
-        TableColumn<Byte, FilmEntity> col_languageID= new TableColumn<>("Language ID");
-        TableColumn<Byte, FilmEntity> col_originalLanguageID= new TableColumn<>("Original Language ID");
-        TableColumn<Byte, FilmEntity> col_rentalDuration= new TableColumn<>("Rental Duration");
-        TableColumn<BigDecimal, FilmEntity> col_rentalRate = new TableColumn<>("Rental Rate");
+        TableColumn<String, FilmEntity> col_actorName = new TableColumn<>("Actor Names");
         TableColumn<Short, FilmEntity> col_length = new TableColumn<>("Length");
         TableColumn<BigDecimal, FilmEntity> col_replacementCost = new TableColumn<>("Replacement Cost");
         TableColumn<String, FilmEntity> col_rating = new TableColumn<>("Rating");
@@ -635,17 +624,14 @@ public class EFDb extends Application {
         col_title.setCellValueFactory(new PropertyValueFactory<>("title"));
         col_description.setCellValueFactory(new PropertyValueFactory<>("description"));
         col_releaseYear.setCellValueFactory(new PropertyValueFactory<>("releaseYear"));
-        col_languageID.setCellValueFactory(new PropertyValueFactory<>("languageId"));
-        col_originalLanguageID.setCellValueFactory(new PropertyValueFactory<>("originalLanguageId"));
-        col_rentalDuration.setCellValueFactory(new PropertyValueFactory<>("rentalDuration"));
-        col_rentalRate.setCellValueFactory(new PropertyValueFactory<>("rentalRate"));
+        col_actorName.setCellValueFactory(new PropertyValueFactory<>("actorName"));
         col_length.setCellValueFactory(new PropertyValueFactory<>("length"));
         col_replacementCost.setCellValueFactory(new PropertyValueFactory<>("replacementCost"));
         col_rating.setCellValueFactory(new PropertyValueFactory<>("rating"));
         col_specialFeatures.setCellValueFactory(new PropertyValueFactory<>("specialFeatures"));
         col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
 
-        filmTable.getColumns().addAll(col_filmID, col_title, col_description, col_releaseYear, col_languageID, col_originalLanguageID, col_rentalDuration, col_rentalRate, col_length, col_replacementCost, col_rating, col_specialFeatures, col_lastUpdate);
+        filmTable.getColumns().addAll(col_filmID, col_title, col_description, col_releaseYear, col_actorName, col_length, col_replacementCost, col_rating, col_specialFeatures, col_lastUpdate);
 
         for (int i = 0; i < olFilms.size(); i++){
             filmTable.getItems().add(olFilms.get(i));
@@ -654,20 +640,23 @@ public class EFDb extends Application {
         ComboBox comboBox = new ComboBox(olFilmTitles);
         comboBox.setPromptText("Film titlar");
 
-        Label searchForMovie = new Label();
-        searchForMovie.setText("Search for movie: ");
-        searchForMovie.setLayoutX(350);
-        searchForMovie.setLayoutY(200);
-        TextField searchField = new TextField();
-        searchField.setPromptText("Search... ");
+        TextField resultField = new TextField();
+        resultField.setText("Actor in films: ");
 
         Button searchButton = new Button();
         searchButton.setLayoutX(250);
         searchButton.setLayoutX(220);
         searchButton.setText("Search");
         searchButton.setOnAction(event -> {
-            searchField.getText();
+            comboBox.getValue();
+            for (FilmEntity film : olFilms){
+                if (comboBox.getValue().equals(film.getTitle())){
+                    resultField.setText("Actor in Films: " + film.getActorName());
+                }
+            }
         });
+
+
 
         VBox vbox = new VBox();
         Button returnToHome = new Button();
@@ -677,7 +666,8 @@ public class EFDb extends Application {
         returnToHome.setOnAction(event -> {
             createHomeScene(primaryStage);
         });
-        vbox.getChildren().addAll(searchForMovie, searchField, searchButton, filmTable, comboBox, returnToHome);
+
+        vbox.getChildren().addAll(filmTable, comboBox, resultField, searchButton, returnToHome);
         BorderPane filmBorderPane = new BorderPane(vbox);
         Scene scene3 = new Scene(filmBorderPane, 1280, 720);
         primaryStage.setScene(scene3);
