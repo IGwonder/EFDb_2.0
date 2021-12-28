@@ -127,25 +127,6 @@ public class EFDb extends Application {
             FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, languageID, originalLanguageID, rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures, lastUpdate/*, filmActors*/);
             olFilms.add(film);
         }
-
-        for(int i = 0; i < filmIDList.size(); i++){
-            Short filmID = filmIDList.get(i);
-            String filmTitle = filmTitleList.get(i);
-            String description = filmDescriptionList.get(i);
-            Date releaseYear = filmReleaseYearList.get(i);
-            Byte languageID = filmLanguageIDList.get(i);
-            Byte originalLanguageID = filmOriginalLanguageIDList.get(i);
-            Byte rentalDuration = filmRentalDurationList.get(i);
-            BigDecimal rentalRate = filmRentalRateList.get(i);
-            Short length = filmLengthList.get(i);
-            BigDecimal replacementCost = filmReplacementCostList.get(i);
-            String rating = filmRatingList.get(i);
-            String specialFeatures = filmSpecialFeaturesList.get(i);
-            Timestamp lastUpdate = filmLastUpdateList.get(i);
-
-            FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, languageID, originalLanguageID, rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures, lastUpdate);
-            olFilms.add(film);
-        }
     }
 
     public static void getHomePageInfo(EntityManager entityManager){

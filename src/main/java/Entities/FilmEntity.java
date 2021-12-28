@@ -170,7 +170,7 @@ public class FilmEntity {
         this.lastUpdate = lastUpdate;
     }
 
-    public FilmEntity() {
+    public FilmEntity(Short filmActorID, String actorFirstName, String actorLastName) {
     }
 
     @Override
