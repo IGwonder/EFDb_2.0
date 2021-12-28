@@ -304,7 +304,7 @@ public class EFDb extends Application {
 
         // Button Action
         bLogin.setOnAction(event -> {
-            checkLogInCredentials(tfUserName,tfPassword,lLogInAnswer); {
+            if(checkLogInCredentials(tfUserName, tfPassword, lLogInAnswer)){
                 createHomeScene(primaryStage);
             }
             tfUserName.clear();
@@ -733,7 +733,7 @@ public class EFDb extends Application {
 
 
     private Boolean checkLogInCredentials(TextField tfUserName, TextField tfPassword, Label lLogInAnswer) {
-        if(!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123")){
+        if((!tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123")) || (!tfUserName.getText().toString().equals("EFDB1") && tfPassword.getText().toString().equals("123")) || (tfUserName.getText().toString().equals("EFDB1") && !tfPassword.getText().toString().equals("123"))){
             lLogInAnswer.setText("Wrong username or password!");
             return false;
         } else return true;
