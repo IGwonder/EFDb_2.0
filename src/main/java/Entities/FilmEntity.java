@@ -50,6 +50,10 @@ public class FilmEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+    private Short filmActorID;
+    private String actorFirstName;
+    private String actorLastName;
+
     public Short getFilmId() {
         return filmId;
     }
@@ -171,6 +175,9 @@ public class FilmEntity {
     }
 
     public FilmEntity(Short filmActorID, String actorFirstName, String actorLastName) {
+        this.actorFirstName = actorFirstName;
+        this.actorLastName = actorLastName;
+        this.filmActorID = filmActorID;
     }
 
     @Override

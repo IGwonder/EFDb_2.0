@@ -98,7 +98,6 @@ public class EFDb extends Application {
             String actorLastName = filmLastNameList.get(i);
             FilmEntity filmActor = new FilmEntity(filmActorID, actorFirstName, actorLastName);
             olFilmActor.add(filmActor);
-            System.out.println(olFilmActor);
         }
 
         for(int i = 0; i < filmIDList.size(); i++){
