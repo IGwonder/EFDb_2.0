@@ -117,26 +117,25 @@ public class AddressEntity {
     public AddressEntity() {
     }
 
-    public AddressEntity(String address, String district, Short cityID, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
-        GeometryFactory geometryFactory = new GeometryFactory();
-        this.address = address;
-        this.district = district;
-        this.cityId = cityID;
-        this.phone = phone;
-        this.location = geometryFactory.createPoint(new Coordinate(10.0, 5.0));
-        this.lastUpdate = lastUpdate;
-    }
+//    public AddressEntity(String address, String district, Short cityID, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
+//        GeometryFactory geometryFactory = new GeometryFactory();
+//        this.address = address;
+//        this.district = district;
+//        this.cityId = cityID;
+//        this.phone = phone;
+//        this.location = geometryFactory.createPoint(new Coordinate(10.0, 5.0));
+//        this.lastUpdate = lastUpdate;
+//    }
 
-    public AddressEntity(Short addressId, String address, String address2, String district, Short cityId, String postalCode, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
+    public AddressEntity(String address, String address2, String district, Short cityId, String postalCode, String phone, Double longitude, Double latitude, Timestamp lastUpdate) {
         GeometryFactory geometryFactory = new GeometryFactory();
-        this.addressId = addressId;
         this.address = address;
         this.address2 = address2;
         this.district = district;
         this.cityId = cityId;
         this.postalCode = postalCode;
         this.phone = phone;
-        this.location = geometryFactory.createPoint(new Coordinate(longitude, latitude));
+        this.location = geometryFactory.createPoint(new Coordinate(10, 5));
         this.lastUpdate = lastUpdate;
     }
 
