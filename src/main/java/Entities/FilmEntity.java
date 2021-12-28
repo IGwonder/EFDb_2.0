@@ -50,6 +50,33 @@ public class FilmEntity {
     @Column(name = "last_update")
     private Timestamp lastUpdate;
 
+    private Short actorFilmID;
+    private String actorFirstName;
+    private String actorLastName;
+
+    public String getActorName() {
+        return actorName;
+    }
+
+    public void setActorName(String actorName) {
+        this.actorName = actorName;
+    }
+
+    private String actorName;
+
+    public FilmEntity(Short filmID, String filmTitle, String description, Date releaseYear, Short length, BigDecimal replacementCost, String rating, String specialFeatures, Timestamp lastUpdate, String actorName) {
+        this.filmId = filmID;
+        this.title = filmTitle;
+        this.description = description;
+        this.releaseYear = releaseYear;
+        this.length = length;
+        this.replacementCost = replacementCost;
+        this.rating = rating;
+        this.specialFeatures = specialFeatures;
+        this.lastUpdate = lastUpdate;
+        this.actorName = actorName;
+    }
+
     public Short getFilmId() {
         return filmId;
     }
@@ -170,7 +197,34 @@ public class FilmEntity {
         this.lastUpdate = lastUpdate;
     }
 
-    public FilmEntity() {
+    public FilmEntity(Short actorFilmID, String actorFirstName, String actorLastName) {
+        this.actorFirstName = actorFirstName;
+        this.actorLastName = actorLastName;
+        this.actorFilmID = actorFilmID;
+    }
+
+    public Short getActorFilmID() {
+        return actorFilmID;
+    }
+
+    public void setActorFilmID(Short actorFilmID) {
+        this.actorFilmID = actorFilmID;
+    }
+
+    public String getActorFirstName() {
+        return actorFirstName;
+    }
+
+    public void setActorFirstName(String actorFirstName) {
+        this.actorFirstName = actorFirstName;
+    }
+
+    public String getActorLastName() {
+        return actorLastName;
+    }
+
+    public void setActorLastName(String actorLastName) {
+        this.actorLastName = actorLastName;
     }
 
     @Override
