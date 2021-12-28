@@ -49,6 +49,41 @@ public class FilmEntity {
 
     @Column(name = "last_update")
     private Timestamp lastUpdate;
+    
+    private Short filmActorID;
+    private String actorFirstName;
+    private String actorLastName;
+    
+
+    public FilmEntity(Short filmActorID, String actorFirstName, String actorLastName) {
+    }
+
+    public FilmEntity(Short filmID, String filmTitle, String description, Date releaseYear, Byte languageID, Byte originalLanguageID, Byte rentalDuration, BigDecimal rentalRate, Short length, BigDecimal replacementCost, String rating, String specialFeatures, Timestamp lastUpdate, String filmActors) {
+    }
+
+    public Short getFilmActorID(){
+        return filmActorID;
+    }
+
+    public void setFilmActorID(Short filmActorID) {
+        this.filmActorID = filmActorID;
+    }
+
+    public String getActorFirstName() {
+        return actorFirstName;
+    }
+
+    public void setActorFirstName(String actorFirstName) {
+        this.actorFirstName = actorFirstName;
+    }
+
+    public String getActorLastName() {
+        return actorLastName;
+    }
+
+    public void setActorLastName(String actorLastName) {
+        this.actorLastName = actorLastName;
+    }
 
     public Short getFilmId() {
         return filmId;
