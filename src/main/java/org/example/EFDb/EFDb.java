@@ -70,6 +70,10 @@ public class EFDb extends Application {
         Query filmSpecialFeaturesQuery = entityManager.createNativeQuery("SELECT special_features FROM film");
         Query filmLastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM film");
 
+        Query filmActorIDQuery = entityManager.createNativeQuery("SELECT actor.actor_id FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
+        Query filmFirstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
+        Query filmLastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM film, actor, film_actor WHERE film.film_id = film_actor.film_id AND film_actor.actor_id = actor.actor_id GROUP BY film_actor.film_id;");
+
         List<Short> filmIDList = filmIDQuery.getResultList();
         List<String> filmTitleList = filmTitleQuery.getResultList();
         List<String> filmDescriptionList = filmDescriptionQuery.getResultList();
@@ -83,6 +87,46 @@ public class EFDb extends Application {
         List<String> filmRatingList = filmRatingQuery.getResultList();
         List<String> filmSpecialFeaturesList = filmSpecialFeaturesQuery.getResultList();
         List<Timestamp> filmLastUpdateList = filmLastUpdateQuery.getResultList();
+        List<Short> filmActorIDList = filmActorIDQuery.getResultList();
+        List<String> filmFirstNameList = filmFirstNameQuery.getResultList();
+        List<String> filmLastNameList = filmLastNameQuery.getResultList();
+
+        ObservableList<FilmEntity> olFilmActor = FXCollections.observableArrayList();
+        for (int i = 0; i < filmActorIDList.size(); i++){
+            Short filmActorID = filmActorIDList.get(i);
+            String actorFirstName = filmFirstNameList.get(i);
+            String actorLastName = filmLastNameList.get(i);
+            FilmEntity filmActor = new FilmEntity(filmActorID, actorFirstName, actorLastName);
+            olFilmActor.add(filmActor);
+            System.out.println(olFilmActor);
+        }
+
+        for(int i = 0; i < filmIDList.size(); i++){
+            Short filmID = filmIDList.get(i);
+            String filmTitle = filmTitleList.get(i);
+            String description = filmDescriptionList.get(i);
+            Date releaseYear = filmReleaseYearList.get(i);
+            Byte languageID = filmLanguageIDList.get(i);
+            Byte originalLanguageID = filmOriginalLanguageIDList.get(i);
+            Byte rentalDuration = filmRentalDurationList.get(i);
+            BigDecimal rentalRate = filmRentalRateList.get(i);
+            Short length = filmLengthList.get(i);
+            BigDecimal replacementCost = filmReplacementCostList.get(i);
+            String rating = filmRatingList.get(i);
+            String specialFeatures = filmSpecialFeaturesList.get(i);
+            Timestamp lastUpdate = filmLastUpdateList.get(i);
+            StringBuilder stringBuilder = new StringBuilder();
+           /* for (FilmEntity filmActor : olFilmActor){
+                System.out.println(filmActor.getActorFirstName());
+                if (i == filmActor.getFilmActorID()) {
+                    stringBuilder.append(filmActor.getActorFirstName() + ", ");
+                    stringBuilder.append(filmActor.getActorLastName() + ", ");
+                }
+            }
+            String filmActors = stringBuilder.toString();*/
+            FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, languageID, originalLanguageID, rentalDuration, rentalRate, length, replacementCost, rating, specialFeatures, lastUpdate/*, filmActors*/);
+            olFilms.add(film);
+        }
 
         for(int i = 0; i < filmIDList.size(); i++){
             Short filmID = filmIDList.get(i);
