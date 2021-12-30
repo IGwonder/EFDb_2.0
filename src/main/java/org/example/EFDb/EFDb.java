@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import javax.persistence.*;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Blob;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -37,7 +38,7 @@ public class EFDb extends Application {
     static final ObservableList olRental = FXCollections.observableArrayList();
     static final ObservableList<PaymentRentalEntity> olPaymentRental = FXCollections.observableArrayList();
     static final ObservableList olLanguage = FXCollections.observableArrayList();
-    ObservableList<FilmEntity> olFilmActor = FXCollections.observableArrayList();
+    static final ObservableList/*<StaffEntity>*/ olStaff = FXCollections.observableArrayList();
 
 
     private static Stage stg;
@@ -117,6 +118,7 @@ public class EFDb extends Application {
             FilmEntity film = new FilmEntity(filmID, filmTitle, description, releaseYear, length, replacementCost, rating, specialFeatures, lastUpdate, actorName);
             olFilms.add(film);
         }
+
     }
 
     public static void getHomePageInfo(EntityManager entityManager){
@@ -226,7 +228,6 @@ public class EFDb extends Application {
             olActorFilms.add(actorFilm);
         }
 
-
         for(int i = 0; i < actorIDList.size(); i++){
             Short actorID = actorIDList.get(i);
             String firstName = actorFirstNameList.get(i);
@@ -287,6 +288,8 @@ public class EFDb extends Application {
         List<Timestamp> createDateList = createDateQuery.getResultList();
         List<Timestamp> lastUpdateList = lastUpdateQuery.getResultList();
 
+
+
         for(int i = 0; i < customerIDList.size(); i++){
             Short customerID = customerIDList.get(i);
             Byte storeID = storeIDList.get(i);
@@ -301,8 +304,55 @@ public class EFDb extends Application {
             CustomerEntity customer = new CustomerEntity(customerID, storeID, customerFirstName, customerLastName, email, addressID, active, dateList, lastUpdate);
             olCustomer.add(customer);
 
-        }
 
+        }
+        System.out.println(olCustomer);
+
+    }
+
+    public static void getStaff(EntityManager entityManager){
+        Query staffIdQuery = entityManager.createNativeQuery("SELECT staff_id FROM staff;");
+        Query firstNameQuery = entityManager.createNativeQuery("SELECT first_name FROM staff;");
+        Query lastNameQuery = entityManager.createNativeQuery("SELECT last_name FROM staff;");
+        Query addressIdQuery = entityManager.createNativeQuery("SELECT address_id FROM staff;");
+/*        Query pictureQuery = entityManager.createNativeQuery("SELECT picture FROM staff;");*/
+        Query emailQuery = entityManager.createNativeQuery("SELECT email FROM staff;");
+        Query storeIdQuery = entityManager.createNativeQuery("SELECT store_id FROM staff;");
+        Query activeQuery = entityManager.createNativeQuery("SELECT active FROM staff;");
+        Query usernameQuery = entityManager.createNativeQuery("SELECT username FROM staff;");
+        Query passwordQuery = entityManager.createNativeQuery("SELECT password FROM staff;");
+        Query lastUpdateQuery = entityManager.createNativeQuery("SELECT last_update FROM staff;");
+
+        List<Short> staffIdList = staffIdQuery.getResultList();
+        List<String> firstNameList = firstNameQuery.getResultList();
+        List<String> lastNameList = lastNameQuery.getResultList();
+        List<Short> addressIdList = addressIdQuery.getResultList();
+/*        List<Blob> pictureList = pictureQuery.getResultList();*/
+        List<String> emailList = emailQuery.getResultList();
+        List<Short> storeIdList = storeIdQuery.getResultList();
+        List<Boolean> activeList = activeQuery.getResultList();
+        List<String> usernameList = usernameQuery.getResultList();
+        List<String> passwordList = passwordQuery.getResultList();
+        List<Date> lastUpdateList = lastUpdateQuery.getResultList();
+
+
+        for (int i = 0; i < staffIdList.size(); i++) {
+            Short staffId = staffIdList.get(i);
+            String firstName = firstNameList.get(i);
+            String lastName = lastNameList.get(i);
+            Short addressId = addressIdList.get(i);
+            /*Blob picture = pictureList.get(i);*/
+            String email = emailList.get(i);
+            Short storeId = storeIdList.get(i);
+            Boolean active = activeList.get(i);
+            String username = usernameList.get(i);
+            String password = passwordList.get(i);
+            Date lastUpdate = lastUpdateList.get(i);
+
+            StaffEntity employed = new StaffEntity(staffId, firstName, lastName, addressId, /*picture,*/ email, storeId, active, username, password, lastUpdate);
+            olStaff.add(employed);
+        }
+        System.out.println(usernameList);
     }
 
 //    public static void getRentalInfo(EntityManager entityManager) {
@@ -391,6 +441,7 @@ public class EFDb extends Application {
             getPaymentRentalInfo(entityManager);
             getLanguage(entityManager);
             getHomePageInfo(entityManager);
+            getStaff(entityManager);
 
             transaction.commit();
 
@@ -505,8 +556,16 @@ public class EFDb extends Application {
             createRentalPage(primaryStage);
         });
 
+        Button adminButton = new Button(buttonBar.toString());
+        rentalButton.setText("Admin");
+        rentalButton.setLayoutX(250);
+        rentalButton.setLayoutY(180);
+        rentalButton.setOnAction(event -> {
+            createAdminPage(primaryStage);
+        });
+
         buttonBar.setAlignment(Pos.BOTTOM_CENTER);
-        buttonBar.getChildren().addAll(filmButton, actorButton, customerDbButton, rentalButton);
+        buttonBar.getChildren().addAll(filmButton, actorButton, customerDbButton, rentalButton, adminButton);
 
         VBox vBoxTop10Table = new VBox(top10Table);
         VBox vBoxSearch = new VBox();
@@ -533,6 +592,98 @@ public class EFDb extends Application {
         homeBorderPane.setLeft(hBoxTableAndSearch);
         homeBorderPane.setRight(vBoxTop10Table);
         homeBorderPane.setBottom(buttonBar);
+        Scene scene2 = new Scene(homeBorderPane,1280,720);
+        primaryStage.setScene(scene2);
+        primaryStage.show();
+    }
+    private void createAdminPage(Stage primaryStage){
+        TableView adminTable = new TableView();
+        TableColumn<Short, StaffEntity> col_staffId = new TableColumn<>("Staff ID");
+        TableColumn<String, StaffEntity> col_firstName = new TableColumn<>("First Name");
+        TableColumn<String, StaffEntity> col_lastName = new TableColumn<>("Last Name");
+        TableColumn<String, StaffEntity> col_email = new TableColumn<>("Email");
+        TableColumn<Short, StaffEntity> col_storeId = new TableColumn<>("Store ID");
+        TableColumn<Boolean, StaffEntity> col_active = new TableColumn<>("Active");
+        TableColumn<String, StaffEntity> col_username = new TableColumn<>("Username");
+        TableColumn<String, StaffEntity> col_password = new TableColumn<>("Password");
+        TableColumn<Date, StaffEntity> col_lastUpdate = new TableColumn<>("Last Update");
+
+        col_staffId.setCellValueFactory(new PropertyValueFactory<>("staffId"));
+        col_firstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
+        col_lastName.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        col_email.setCellValueFactory(new PropertyValueFactory<>("email"));
+        col_storeId.setCellValueFactory(new PropertyValueFactory<>("storeId"));
+        col_active.setCellValueFactory(new PropertyValueFactory<>("active"));
+        col_username.setCellValueFactory(new PropertyValueFactory<>("username"));
+        col_password.setCellValueFactory(new PropertyValueFactory<>("password"));
+        col_lastUpdate.setCellValueFactory(new PropertyValueFactory<>("lastUpdate"));
+
+        adminTable.getColumns().addAll(col_staffId, col_firstName, col_lastName, col_email, col_storeId, col_active, col_username, col_password, col_lastUpdate);
+
+        for (int i = 0; i < olStaff.size(); i++) {
+            adminTable.getItems().add(olStaff.get(i));
+        }
+
+
+/*
+        for (int i = 0; i < olPaymentRental.size(); i++){
+            rentalTable.getItems().add(olPaymentRental.get(i));
+        ComboBox comboBox = new ComboBox(olFilmTitles);
+        comboBox.setPromptText("Film titlar");
+
+        TextField resultField = new TextField();
+        resultField.setText("Actor in films: ");
+
+        Button searchButton = new Button();
+        searchButton.setLayoutX(250);
+        searchButton.setLayoutX(220);
+        searchButton.setText("Search");
+        searchButton.setOnAction(event -> {
+            comboBox.getValue();
+            for (FilmEntity film : olFilms){
+                if (comboBox.getValue().equals(film.getTitle())){
+                    resultField.setText("Actor in Films: " + film.getActorName());
+                }
+            }
+        });*/
+
+
+
+        VBox vBox = new VBox();
+        TextField firstNameText = new TextField();
+        firstNameText.setPromptText("First Name");
+        TextField lastNameText = new TextField();
+        lastNameText.setPromptText("Last Name");
+        TextField emailText = new TextField();
+        emailText.setPromptText("Email");
+        TextField countryText = new TextField();
+        countryText.setPromptText("Country");
+        TextField cityText = new TextField();
+        cityText.setPromptText("City");
+        TextField addressText = new TextField();
+        addressText.setPromptText("Address");
+        TextField usernameText = new TextField();
+        usernameText.setPromptText("Username");
+        TextField passwordText = new TextField();
+        passwordText.setPromptText("Password");
+        Button addButton = new Button("Add Staff");
+
+        Button returnToHome = new Button();
+        returnToHome.setText("Return");
+        vBox.setAlignment(Pos.CENTER);
+        returnToHome.setLayoutX(250);
+        returnToHome.setLayoutY(220);
+        returnToHome.setOnAction(event -> {
+            createHomeScene(primaryStage);
+        });
+
+        HBox hBox = new HBox();
+
+        vBox.getChildren().addAll(firstNameText, lastNameText, emailText, countryText, cityText, addressText, usernameText, passwordText, addButton, returnToHome, hBox);
+        hBox.getChildren().addAll(adminTable);
+        BorderPane homeBorderPane = new BorderPane();
+        homeBorderPane.setCenter(adminTable);
+        homeBorderPane.setLeft(vBox);
         Scene scene2 = new Scene(homeBorderPane,1280,720);
         primaryStage.setScene(scene2);
         primaryStage.show();
